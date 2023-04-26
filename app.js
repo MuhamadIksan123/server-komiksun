@@ -9,6 +9,7 @@ var app = express();
 // import router genre
 const genreRouter = require('./app/api/v1/genre/router');
 const imagesRouter = require("./app/api/v1/images/router");
+const komikRouter = require("./app/api/v1/komik/router");
 
 // middlewares
 const notFoundMidlleware = require('./app/middlewares/not-found');
@@ -33,6 +34,7 @@ app.get('/', (req, res) => {
 // gunakan genre router
 app.use(v1, genreRouter);
 app.use(v1, imagesRouter);
+app.use(v1, komikRouter);
 
 // middlewares
 app.use(notFoundMidlleware);
