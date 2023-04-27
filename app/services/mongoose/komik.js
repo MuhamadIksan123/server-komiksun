@@ -1,6 +1,8 @@
 // import model Komik
 const Komik = require('../../api/v1/komik/model');
 const { checkingImage } = require("./images");
+const { checkingGenre } = require("./genre");
+
 
 // import custom error not found dan bad request
 const { NotFoundError, BadRequestError } = require("../../errors");
@@ -11,7 +13,7 @@ const getAllKomik = async (req) => {
   let condition = {};
 
   if (keyword) {
-    condition = { ...condition, nama: { $regex: keyword, $options: "i" } };
+    condition = { ...condition, judul: { $regex: keyword, $options: "i" } };
   }
 
   const result = await Komik.find(condition)
@@ -33,6 +35,7 @@ const createKomik = async (req) => {
 
   // cari image dengan field image
   await checkingImage(image);
+  await checkingGenre(genre);
 
   // cari komik dengan field nama
   const check = await Komik.findOne({ judul });
@@ -78,8 +81,9 @@ const updateKomik = async (req) => {
   const { id } = req.params;
   const { judul, penulis, sinopsis, status, price, genre, image } = req.body;
 
-  // cari image dengan field image
+  // cari image dengan field image dan genre
   await checkingImage(image);
+  await checkingGenre(genre);
 
   // cari komik dengan field nama dan id selain dari yang dikirim dari params
   const check = await Komik.findOne({
