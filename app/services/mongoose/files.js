@@ -4,7 +4,7 @@ const createFiles = async (req) => {
     const result = await Files.create({
         nama: req.file
         ? `uploads/${req.file.filename}`
-        : 'uploads/avatar/default.pdf'
+        : 'uploads/berkas/default.pdf'
     });
 
     return result;

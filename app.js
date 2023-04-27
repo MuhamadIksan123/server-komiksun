@@ -12,6 +12,7 @@ const imagesRouter = require("./app/api/v1/images/router");
 const komikRouter = require("./app/api/v1/komik/router");
 const filesRouter = require("./app/api/v1/files/router");
 const chapterRouter = require("./app/api/v1/chapter/router");
+const paymentRouter = require("./app/api/v1/payment/router");
 
 // middlewares
 const notFoundMidlleware = require('./app/middlewares/not-found');
@@ -39,6 +40,7 @@ app.use(v1, imagesRouter);
 app.use(v1, komikRouter);
 app.use(v1, filesRouter);
 app.use(v1, chapterRouter);
+app.use(v1, paymentRouter);
 
 // middlewares
 app.use(notFoundMidlleware);
