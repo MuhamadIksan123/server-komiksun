@@ -13,6 +13,9 @@ const komikRouter = require("./app/api/v1/komik/router");
 const filesRouter = require("./app/api/v1/files/router");
 const chapterRouter = require("./app/api/v1/chapter/router");
 const paymentRouter = require("./app/api/v1/payment/router");
+const userRouter = require("./app/api/v1/user/router");
+const authRouter = require("./app/api/v1/auth/router");
+
 
 // middlewares
 const notFoundMidlleware = require('./app/middlewares/not-found');
@@ -41,6 +44,8 @@ app.use(v1, komikRouter);
 app.use(v1, filesRouter);
 app.use(v1, chapterRouter);
 app.use(v1, paymentRouter);
+app.use(v1, userRouter);
+app.use(v1, authRouter);
 
 // middlewares
 app.use(notFoundMidlleware);
