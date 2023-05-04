@@ -41,11 +41,11 @@ let komikSchema = Schema(
       ref: "Image",
       required: [true, "Image harus diupload"]
     },
-    // vendor: {
-    //   type: mongoose.Types.ObjectId,
-    //   ref: "User",
-    //   required: true,
-    // },
+    vendor: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

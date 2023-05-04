@@ -9,7 +9,7 @@ const { NotFoundError, BadRequestError } = require("../../errors");
 const getAllChapter = async (req) => {
   const { keyword } = req.query;
 
-  let condition = {};
+  let condition = { vendor: req.user.userId };
 
   if (keyword) {
     condition = { ...condition, judul: { $regex: keyword, $options: "i" } };
@@ -47,6 +47,7 @@ const createChapter = async (req) => {
     rilis,
     file,
     komik,
+    vendor: req.user.userId,
   });
 
   return result;
@@ -57,6 +58,7 @@ const getOneChapter = async (req) => {
 
   const result = await Chapter.findOne({
     _id: id,
+    vendor: req.user.userId,
   })
     .populate({
       path: "file",
@@ -85,6 +87,7 @@ const updateChapter = async (req) => {
   const check = await Chapter.findOne({
     judul,
     _id: { $ne: id },
+    vendor: req.user.userId,
   });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik nama duplikat
@@ -107,6 +110,7 @@ const deleteChapter = async (req) => {
 
   const result = await Chapter.findOneAndRemove({
     _id: id,
+    vendor: req.user.userId,
   });
 
   if (!result) throw new NotFoundError(`Tidak ada chapter dengan id :  ${id}`);

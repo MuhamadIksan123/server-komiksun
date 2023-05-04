@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema(
     },
     lahir: {
       type: Date,
+      default: "",
     },
     status: {
       type: String,
@@ -34,22 +35,25 @@ const userSchema = new mongoose.Schema(
     },
     otp: {
       type: String,
-      required: true,
+      default: "",
     },
     nomor: {
       type: String,
+      default: "",
     },
-    Komik: {
+    komik: {
       type: Array,
       default: [],
     },
     sampul: {
       type: mongoose.Types.ObjectId,
       ref: "Image",
+      default: "644a329c733339974c1e1335",
     },
     profile: {
       type: mongoose.Types.ObjectId,
       ref: "Image",
+      default: "644a329c733339974c1e1335",
     },
   },
   { timestamps: true }

@@ -23,11 +23,11 @@ const PaymentSchema = Schema(
       enum: [true, false],
       default: true,
     },
-    // organizer: {
-    //   type: mongoose.Types.ObjectId,
-    //   ref: 'Organizer',
-    //   required: true,
-    // },
+    vendor: {
+      type: mongoose.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   { timestamps: true }
 );

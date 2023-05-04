@@ -10,21 +10,13 @@ const { NotFoundError, BadRequestError } = require("../../errors");
 const getAllKomik = async (req) => {
   const { keyword } = req.query;
 
-  let condition = {};
+  let condition = { vendor: req.user.userId };
 
   if (keyword) {
     condition = { ...condition, judul: { $regex: keyword, $options: "i" } };
   }
 
   const result = await Komik.find(condition)
-    .populate({
-      path: "image",
-      select: "_id nama",
-    })
-    .populate({
-      path: "genre",
-      select: "_id nama",
-    })
     .select("_id judul penulis sinopsis status price genre image");
 
   return result;
@@ -34,8 +26,8 @@ const createKomik = async (req) => {
   const { judul, penulis, sinopsis, status, price, genre, image } = req.body;
 
   // cari image dengan field image
-  await checkingImage(image);
   await checkingGenre(genre);
+  await checkingImage(image);
 
   // cari komik dengan field nama
   const check = await Komik.findOne({ judul });
@@ -51,6 +43,7 @@ const createKomik = async (req) => {
     price,
     genre,
     image,
+    vendor: req.user.userId
   });
 
   return result;
@@ -61,6 +54,7 @@ const getOneKomik = async (req) => {
 
   const result = await Komik.findOne({
     _id: id,
+    vendor: req.user.userId,
   })
     .populate({
       path: "image",
@@ -89,6 +83,7 @@ const updateKomik = async (req) => {
   const check = await Komik.findOne({
     judul,
     _id: { $ne: id },
+    vendor: req.user.userId,
   });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik nama duplikat
@@ -111,6 +106,7 @@ const deleteKomik = async (req) => {
 
   const result = await Komik.findOneAndRemove({
     _id: id,
+    vendor: req.user.userId,
   });
 
   if (!result) throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);

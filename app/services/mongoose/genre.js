@@ -64,7 +64,7 @@ const deleteGenre = async (req) => {
 
 // tambahkan function checking Genre 
 const checkingGenre = async (id) => {
-  const result = await Images.findOne({ _id: id });
+  const result = await Genre.findOne({ _id: id });
   
   if (!result) throw new NotFoundError(`Tidak ada Genre dengan id :  ${id}`);
 

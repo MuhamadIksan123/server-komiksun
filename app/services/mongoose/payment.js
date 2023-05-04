@@ -4,7 +4,7 @@ const { checkingImage } = require("./images");
 const { NotFoundError, BadRequestError } = require("../../errors");
 
 const getAllPayment = async (req) => {
-  let condition = { };
+  let condition = { vendor: req.user.userId };
 
   const result = await Payment.find(condition)
     .populate({
@@ -29,6 +29,7 @@ const createPayment = async (req) => {
     image,
     type,
     nomor,
+    vendor: req.user.userId,
   });
 
   return result;
@@ -39,6 +40,7 @@ const getOnePayment = async (req) => {
 
   const result = await Payment.findOne({
     _id: id,
+    vendor: req.user.userId,
   })
     .populate({
       path: "image",
@@ -61,6 +63,7 @@ const updatePayment = async (req) => {
   const check = await Payment.findOne({
     type,
     _id: { $ne: id },
+    vendor: req.user.userId,
   });
 
   if (check) throw new BadRequestError("Tipe pembayaran duplikat");
@@ -82,6 +85,7 @@ const deletePayment = async (req) => {
 
   const result = await Payment.findOneAndRemove({
     _id: id,
+    vendor: req.user.userId,
   });
 
   if (!result)

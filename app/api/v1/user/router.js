@@ -8,10 +8,30 @@ const {
   deleteCMSUser,
 } = require("./controller");
 
-router.get("/user", getAllCMSUser);
-router.post("/user", createCMSUser);
-router.get("/user/:id", getOneCMSUser);
-router.put("/user/:id", updateCMSUser);
-router.delete("/user/:id", deleteCMSUser);
+const {
+  authenticateUser,
+  authorizeRoles,
+} = require("../../../middlewares/auth");
+
+router.get("/user", authenticateUser, authorizeRoles("admin"), getAllCMSUser);
+router.post("/user", authenticateUser, authorizeRoles("admin"), createCMSUser);
+router.get(
+  "/user/:id",
+  authenticateUser,
+  authorizeRoles("admin"),
+  getOneCMSUser
+);
+router.put(
+  "/user/:id",
+  authenticateUser,
+  authorizeRoles("admin"),
+  updateCMSUser
+);
+router.delete(
+  "/user/:id",
+  authenticateUser,
+  authorizeRoles("admin"),
+  deleteCMSUser
+);
 
 module.exports = router;

@@ -2,10 +2,20 @@ const express = require("express");
 const router = express();
 const { create, index, find, update, destroy } = require("./controller");
 
-router.get("/chapter", index);
-router.get("/chapter/:id", find);
-router.post("/chapter", create);
-router.put("/chapter/:id", update);
-router.delete("/chapter/:id", destroy);
+const {
+  authenticateUser,
+  authorizeRoles,
+} = require("../../../middlewares/auth");
+
+router.get("/chapter", authenticateUser, authorizeRoles("vendor"), index);
+router.get("/chapter/:id", authenticateUser, authorizeRoles("vendor"), find);
+router.post("/chapter", authenticateUser, authorizeRoles("vendor"), create);
+router.put("/chapter/:id", authenticateUser, authorizeRoles("vendor"), update);
+router.delete(
+  "/chapter/:id",
+  authenticateUser,
+  authorizeRoles("vendor"),
+  destroy
+);
 
 module.exports = router;

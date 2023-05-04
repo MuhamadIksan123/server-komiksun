@@ -24,11 +24,11 @@ let chapterSchema = Schema(
       ref: "Komik",
       required: true,
     },
-    // vendor: {
-    //   type: mongoose.Types.ObjectId,
-    //   ref: "User",
-    //   required: true,
-    // },
+    vendor: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
   { timestamps: true }
 );

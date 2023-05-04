@@ -34,6 +34,8 @@ const createUser = async (req, res) => {
     komik,
   });
 
+  console.log(role);
+
   return result;
 };
 
