@@ -8,12 +8,20 @@ const { checkingGenre } = require("./genre");
 const { NotFoundError, BadRequestError } = require("../../errors");
 
 const getAllKomik = async (req) => {
-  const { keyword } = req.query;
+  const { keyword, genre, status } = req.query;
 
   let condition = { vendor: req.user.userId };
 
   if (keyword) {
     condition = { ...condition, judul: { $regex: keyword, $options: "i" } };
+  }
+
+  if (genre) {
+    condition = { ...condition, genre: genre };
+  }
+
+  if (["ongoing", "tamat"].includes(status)) {
+    condition = { ...condition, status: status };
   }
 
   const result = await Komik.find(condition)

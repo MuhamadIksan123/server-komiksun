@@ -15,7 +15,7 @@ const PaymentSchema = Schema(
       required: true,
     },
     nomor: {
-      type: Number,
+      type: String,
       required: true,
     },
     status: {

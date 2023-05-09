@@ -16,14 +16,6 @@ const getAllChapter = async (req) => {
   }
 
   const result = await Chapter.find(condition)
-    .populate({
-      path: "file",
-      select: "_id nama",
-    })
-    .populate({
-      path: "komik",
-      select: "_id judul",
-    })
     .select("_id judul rilis file komik");
 
   return result;
@@ -37,7 +29,7 @@ const createChapter = async (req) => {
   await checkingKomik(komik);
 
   // cari komik dengan field nama
-  const check = await Chapter.findOne({ judul });
+  const check = await Chapter.findOne({ judul, vendor: req.user.userId });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik duplikat
   if (check) throw new BadRequestError("judul komik duplikat");
