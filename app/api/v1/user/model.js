@@ -22,11 +22,11 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["customer", "vendor", "admin"],
-      default: "customer",
+      required: [true, "Role harus diisi"],
     },
     lahir: {
       type: Date,
-      default: "",
+      default: new Date(),
     },
     status: {
       type: String,
@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     },
     otp: {
       type: String,
-      default: "",
+      required: true,
     },
     nomor: {
       type: String,

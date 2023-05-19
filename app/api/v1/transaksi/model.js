@@ -34,9 +34,8 @@ const transaksiSchema = new mongoose.Schema(
       default: "pending",
     },
     price: {
-      type: mongoose.Types.ObjectId,
-      ref: "Komik",
-      required: true,
+      type: Number,
+      default: 0
     },
     customer: {
       type: mongoose.Types.ObjectId,
@@ -53,7 +52,7 @@ const transaksiSchema = new mongoose.Schema(
       ref: "Komik",
       required: true,
     },
-    historyEvent: {
+    historyKomik: {
       judul: {
         type: String,
         minlength: 5,

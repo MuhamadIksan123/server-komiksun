@@ -15,6 +15,8 @@ const chapterRouter = require("./app/api/v1/chapter/router");
 const paymentRouter = require("./app/api/v1/payment/router");
 const userRouter = require("./app/api/v1/user/router");
 const authRouter = require("./app/api/v1/auth/router");
+const customerRouter = require("./app/api/v1/customer/router");
+
 
 
 // middlewares
@@ -22,7 +24,7 @@ const notFoundMidlleware = require('./app/middlewares/not-found');
 const handleErrorMidlleware = require('./app/middlewares/handler-error');
 
 // membuat variabel v1
-const v1 = '/api/v1/cms';
+const v1 = '/api/v1';
 
 
 app.use(logger('dev'));
@@ -38,14 +40,16 @@ app.get('/', (req, res) => {
 })
 
 // gunakan genre router
-app.use(v1, genreRouter);
-app.use(v1, imagesRouter);
-app.use(v1, komikRouter);
-app.use(v1, filesRouter);
-app.use(v1, chapterRouter);
-app.use(v1, paymentRouter);
-app.use(v1, userRouter);
-app.use(v1, authRouter);
+app.use(`${v1}/cms`, genreRouter);
+app.use(`${v1}/cms`, imagesRouter);
+app.use(`${v1}/cms`, komikRouter);
+app.use(`${v1}/cms`, filesRouter);
+app.use(`${v1}/cms`, chapterRouter);
+app.use(`${v1}/cms`, paymentRouter);
+app.use(`${v1}/cms`, userRouter);
+app.use(`${v1}/cms`, authRouter);
+app.use(v1, customerRouter);
+
 
 // middlewares
 app.use(notFoundMidlleware);
