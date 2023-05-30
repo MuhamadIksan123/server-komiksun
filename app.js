@@ -1,10 +1,11 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const cors = require('cors')
 
 
-var app = express();
+const app = express();
 
 // import router genre
 const genreRouter = require('./app/api/v1/genre/router');
@@ -26,7 +27,7 @@ const handleErrorMidlleware = require('./app/middlewares/handler-error');
 // membuat variabel v1
 const v1 = '/api/v1';
 
-
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

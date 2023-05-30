@@ -6,7 +6,7 @@ const {
   authorizeRoles,
 } = require("../../../middlewares/auth");
 
-router.get("/komik", authenticateUser, authorizeRoles('vendor'), index);
+router.get("/komik", authenticateUser, authorizeRoles('vendor', 'admin'), index);
 router.get("/komik/:id", authenticateUser, authorizeRoles("vendor"), find);
 router.post("/komik", authenticateUser, authorizeRoles("vendor"), create);
 router.put("/komik/:id", authenticateUser, authorizeRoles("vendor"), update);

@@ -39,21 +39,15 @@ const userSchema = new mongoose.Schema(
     },
     nomor: {
       type: String,
-      default: "",
+      default: "-",
     },
     komik: {
       type: Array,
       default: [],
     },
-    sampul: {
+    image: {
       type: mongoose.Types.ObjectId,
       ref: "Image",
-      default: "644a329c733339974c1e1335",
-    },
-    profile: {
-      type: mongoose.Types.ObjectId,
-      ref: "Image",
-      default: "644a329c733339974c1e1335",
     },
   },
   { timestamps: true }

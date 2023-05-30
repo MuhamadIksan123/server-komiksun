@@ -11,9 +11,9 @@ const createUser = async (req, res) => {
     lahir,
     status,
     otp,
-    sampul,
-    profile,
+    nomor,
     komik,
+    image
   } = req.body;
 
   if (password !== confirmPassword) {
@@ -29,12 +29,10 @@ const createUser = async (req, res) => {
     lahir,
     status,
     otp,
-    sampul,
-    profile,
+    nomor,
     komik,
+    image
   });
-
-  console.log(role);
 
   return result;
 };
@@ -52,15 +50,11 @@ const getOneUser = async (req) => {
     _id: id,
   })
     .populate({
-      path: "sampul",
-      select: "_id nama",
-    })
-    .populate({
-      path: "profile",
+      path: "image",
       select: "_id nama",
     })
     .select(
-      "_id nama password role email lahir status otp sampul profile komik"
+      "_id nama password role email lahir status otp nomor image komik"
     );
 
   if (!result)
@@ -80,8 +74,7 @@ const updateUser = async (req) => {
     lahir,
     status,
     otp,
-    sampul,
-    profile,
+    image,
     komik,
   } = req.body;
 
@@ -103,8 +96,7 @@ const updateUser = async (req) => {
       lahir,
       status,
       otp,
-      sampul,
-      profile,
+      image,
       komik,
     },
     { new: true, runValidators: true }

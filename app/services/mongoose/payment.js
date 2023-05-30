@@ -1,14 +1,17 @@
-const Payment = require("../../api/v1/payment/model");
-const { checkingImage } = require("./images");
+const Payment = require('../../api/v1/payment/model');
+const { checkingImage } = require('./images');
 
-const { NotFoundError, BadRequestError } = require("../../errors");
+const { NotFoundError, BadRequestError } = require('../../errors');
 
 const getAllPayment = async (req) => {
   let condition = { vendor: req.user.userId };
 
-  const result = await Payment.find(condition).select(
-    "_id type nomor status image"
-  );
+  const result = await Payment.find(condition)
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
+    .select('_id type nomor status image');
 
   return result;
 };
@@ -20,7 +23,7 @@ const createPayment = async (req) => {
 
   const check = await Payment.findOne({ type });
 
-  if (check) throw new BadRequestError("Tipe pembayaran duplikat");
+  if (check) throw new BadRequestError('Tipe pembayaran duplikat');
 
   const result = await Payment.create({
     image,
@@ -40,10 +43,10 @@ const getOnePayment = async (req) => {
     vendor: req.user.userId,
   })
     .populate({
-      path: "image",
-      select: "_id nama",
+      path: 'image',
+      select: '_id nama',
     })
-    .select("_id type nomor status image");
+    .select('_id type nomor status image');
 
   if (!result)
     throw new NotFoundError(`Tidak ada tipe pembayaran dengan id :  ${id}`);
@@ -63,7 +66,7 @@ const updatePayment = async (req) => {
     vendor: req.user.userId,
   });
 
-  if (check) throw new BadRequestError("Tipe pembayaran duplikat");
+  if (check) throw new BadRequestError('Tipe pembayaran duplikat');
 
   const result = await Payment.findOneAndUpdate(
     { _id: id },

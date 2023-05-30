@@ -16,7 +16,15 @@ const getAllChapter = async (req) => {
   }
 
   const result = await Chapter.find(condition)
-    .select("_id judul rilis file komik");
+    .populate({
+      path: 'file',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: '_id judul',
+    })
+    .select('_id judul rilis file komik');
 
   return result;
 };
@@ -40,7 +48,16 @@ const createChapter = async (req) => {
     file,
     komik,
     vendor: req.user.userId,
-  });
+  })
+    .populate({
+      path: 'file',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: '_id judul',
+    })
+    .select('_id judul rilis file komik');
 
   return result;
 };
