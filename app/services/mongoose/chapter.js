@@ -48,16 +48,7 @@ const createChapter = async (req) => {
     file,
     komik,
     vendor: req.user.userId,
-  })
-    .populate({
-      path: 'file',
-      select: '_id nama',
-    })
-    .populate({
-      path: 'komik',
-      select: '_id judul',
-    })
-    .select('_id judul rilis file komik');
+  });
 
   return result;
 };

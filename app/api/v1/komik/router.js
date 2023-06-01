@@ -8,7 +8,7 @@ const {
 
 router.get("/komik", authenticateUser, authorizeRoles('vendor', 'admin'), index);
 router.get("/komik/:id", authenticateUser, authorizeRoles("vendor"), find);
-router.post("/komik", authenticateUser, authorizeRoles("vendor"), create);
+router.post("/komik", authenticateUser, authorizeRoles("vendor", 'admin'), create);
 router.put("/komik/:id", authenticateUser, authorizeRoles("vendor"), update);
 router.delete(
   "/komik/:id",

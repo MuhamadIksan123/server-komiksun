@@ -38,7 +38,15 @@ const createUser = async (req, res) => {
 };
 
 const getAllUser = async (req) => {
-  const result = await User.find();
+  const result = await User.find()
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: []
+    })
 
   return result;
 };
@@ -69,11 +77,11 @@ const updateUser = async (req) => {
     nama,
     password,
     role,
-    confirmPassword,
     email,
     lahir,
     status,
     otp,
+    nomor,
     image,
     komik,
   } = req.body;
@@ -91,11 +99,11 @@ const updateUser = async (req) => {
       nama,
       password,
       role,
-      confirmPassword,
       email,
       lahir,
       status,
       otp,
+      nomor,
       image,
       komik,
     },
