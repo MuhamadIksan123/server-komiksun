@@ -2,11 +2,16 @@ const {
   signupUser,
   activateUser,
   signinUser,
+  getAllGenre,
   getAllKomik,
   getOneKomik,
   getAllTransaksi,
   checkoutOrder,
-  getAllPaymentByVendor
+  getAllPaymentByVendor,
+  getAllVendor,
+  getOneVendor,
+  getAllChapter,
+  getOneChapter
 } = require("../../../services/mongoose/customer");
 
 const { StatusCodes } = require("http-status-codes");
@@ -41,6 +46,18 @@ const signin = async (req, res, next) => {
 
     res.status(StatusCodes.OK).json({
       data: { token: result },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getAllListGenre = async (req, res, next) => {
+  try {
+    const result = await getAllGenre(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
     });
   } catch (err) {
     next(err);
@@ -107,6 +124,56 @@ const getAllPayment = async (req, res, next) => {
   }
 };
 
+const getAllWriter = async (req, res, next) => {
+  try {
+    const result = await getAllVendor(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getDetailWriter = async (req, res, next) => {
+  try {
+    const result = await getOneVendor(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+
+
+const getAllLandingChapter = async (req, res, next) => {
+  try {
+    const result = await getAllChapter(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getDetailChapter = async (req, res, next) => {
+  try {
+    const result = await getOneChapter(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   signup,
   activeUser,
@@ -116,5 +183,10 @@ module.exports = {
   getDetailLandingPage,
   getDashboard,
   checkout,
-  getAllPayment
+  getAllPayment,
+  getAllListGenre,
+  getAllWriter,
+  getDetailWriter,
+  getAllLandingChapter,
+  getDetailChapter
 };

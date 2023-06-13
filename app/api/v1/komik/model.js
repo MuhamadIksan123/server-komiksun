@@ -18,7 +18,7 @@ let komikSchema = Schema(
     sinopsis: {
       type: String,
       minlength: [30, "Panjang sinopsis minimal 30 karakter"],
-      maxLength: [100, "Panjang sinopsis maksimal 100 karakter"],
+      maxLength: [400, "Panjang sinopsis maksimal 400 karakter"],
       required: [true, "Nama harus diisi"],
     },
     status: {

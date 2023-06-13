@@ -1,7 +1,9 @@
 const User = require("../../api/v1/user/model");
 const Komik = require("../../api/v1/komik/model");
+const Genre = require('../../api/v1/genre/model');
 const Transaksi = require("../../api/v1/transaksi/model");
 const Payment = require("../../api/v1/payment/model");
+const Chapter = require('../../api/v1/chapter/model');
 
 const {
   BadRequestError,
@@ -96,9 +98,26 @@ const signinUser = async (req) => {
   return token;
 };
 
+const getAllGenre = async () => {
+  const result = await Genre.find();
+  return result;
+};
+
 const getAllKomik = async (req) => {
-  const result = await Komik.find({ status: "Ongoing" })
-    .select("_id judul penulis sinopsis status price genre image");
+  const result = await Komik.find()
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'genre',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'vendor',
+      select: '_id nama role email lahir status otp nomor image komik',
+    })
+    .select('_id judul penulis sinopsis status price genre image vendor');
 
   return result;
 };
@@ -107,10 +126,73 @@ const getOneKomik = async (req) => {
   const { id } = req.params;
   const result = await Komik.findOne({ _id: id })
     .populate('genre')
-    .populate({ path: 'vendor', populate: 'profile' })
-    .populate('image');
+    .populate({ path: 'vendor', populate: 'image' })
+    .populate('image');;
 
   if (!result) throw new NotFoundError(`Tidak ada acara dengan id :  ${id}`);
+
+  return result;
+};
+
+const getAllVendor = async (req) => {
+  const result = await User.find({ role: 'vendor' })
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: [],
+    });
+
+  return result;
+};
+
+const getOneVendor = async (req) => {
+  const { id } = req.params;
+  const result = await User.findOne({ _id: id })
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: [],
+    });
+
+  if (!result) throw new NotFoundError(`Tidak ada vendor dengan id :  ${id}`);
+
+  return result;
+};
+
+const getAllChapter = async (req) => {
+  const result = await Chapter.find()
+    .populate({
+      path: 'file',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: '_id judul',
+    })
+
+  return result;
+};
+
+const getOneChapter = async (req) => {
+  const { id } = req.params;
+  const result = await Chapter.findOne({ _id: id })
+    .populate({
+      path: 'file',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: '_id judul',
+    });
+    
+
+  if (!result) throw new NotFoundError(`Tidak ada vendor dengan id :  ${id}`);
 
   return result;
 };
@@ -179,9 +261,14 @@ module.exports = {
   signupUser,
   activateUser,
   signinUser,
+  getAllGenre,
   getAllKomik,
   getOneKomik,
   getAllTransaksi,
   checkoutOrder,
-  getAllPaymentByVendor
+  getAllPaymentByVendor,
+  getAllVendor,
+  getOneVendor,
+  getAllChapter,
+  getOneChapter
 };

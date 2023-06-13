@@ -7,12 +7,16 @@ const { checkingKomik } = require("./komik");
 const { NotFoundError, BadRequestError } = require("../../errors");
 
 const getAllChapter = async (req) => {
-  const { keyword } = req.query;
+  const { keyword, komik } = req.query;
 
   let condition = { vendor: req.user.userId };
 
   if (keyword) {
     condition = { ...condition, judul: { $regex: keyword, $options: "i" } };
+  }
+
+  if (komik) {
+    condition = { ...condition, komik: komik };
   }
 
   const result = await Chapter.find(condition)

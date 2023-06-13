@@ -9,6 +9,11 @@ const {
   getDashboard,
   checkout,
   getAllPayment,
+  getAllListGenre,
+  getAllWriter,
+  getDetailWriter,
+  getAllLandingChapter,
+  getDetailChapter
 } = require("./controller");
 
 const { authenticateUser } = require("../../../middlewares/auth");
@@ -21,5 +26,12 @@ router.get("/komik/:id", getDetailLandingPage);
 router.get("/transaksi", authenticateUser, getDashboard);
 router.post("/checkout", authenticateUser, checkout);
 router.get("/payment/:vendor", authenticateUser, getAllPayment);
+router.get('/genre', getAllListGenre);
+router.get('/vendor', getAllWriter);
+router.get('/vendor/:id', getDetailWriter);
+router.get('/chapter', getAllLandingChapter);
+router.get('/chapter/:id', getDetailChapter);
+
+
 
 module.exports = router;
