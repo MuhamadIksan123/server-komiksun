@@ -23,10 +23,6 @@ const getAllKomik = async (req) => {
     condition = { ...condition, genre: genre };
   }
 
-  if (['ongoing', 'tamat'].includes(status)) {
-    condition = { ...condition, status: status };
-  }
-
   const result = await Komik.find(condition)
     .populate({
       path: 'image',
@@ -36,14 +32,13 @@ const getAllKomik = async (req) => {
       path: 'genre',
       select: '_id nama',
     })
-    .select('_id judul penulis sinopsis status price genre image');
 
   return result;
 };
 
 const createKomik = async (req) => {
   console.log(req.body);
-  const { judul, penulis, sinopsis, status, price, genre, image } = req.body;
+  const { judul, penulis, sinopsis, status, price, jenis, rilis, genre, image } = req.body;
 
   // cari image dengan field image
   await checkingGenre(genre);
@@ -61,6 +56,8 @@ const createKomik = async (req) => {
     sinopsis,
     status,
     price,
+    jenis,
+    rilis,
     genre,
     image,
     vendor: req.user.userId,
@@ -85,7 +82,6 @@ const getOneKomik = async (req) => {
       path: 'genre',
       select: '_id nama',
     })
-    .select('_id judul penulis sinopsis status price genre image');
 
   if (!result) throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
 
@@ -95,7 +91,7 @@ const getOneKomik = async (req) => {
 const updateKomik = async (req) => {
   const { id } = req.params;
   console.log(req.body);
-  const { judul, penulis, sinopsis, status, price, genre, image } = req.body;
+  const { judul, penulis, sinopsis, status, price, jenis, rilis, genre, image } = req.body;
 
   // cari image dengan field image dan genre
   await checkingImage(image);
@@ -113,7 +109,7 @@ const updateKomik = async (req) => {
 
   const result = await Komik.findOneAndUpdate(
     { _id: id },
-    { judul, penulis, sinopsis, status, price, genre, image },
+    { judul, penulis, sinopsis, status, price, jenis, rilis, genre, image },
     { new: true, runValidators: true }
   );
 
@@ -146,6 +142,31 @@ const checkingKomik = async (id) => {
   return result;
 };
 
+const changeStatusKomik = async (req) => {
+  const { id } = req.params;
+  const { statusKomik } = req.body;
+
+  if (!['Publikasi', 'Tolak Publikasi'].includes(statusKomik)) {
+    throw new BadRequestError('Status harus Draft atau Published');
+  }
+
+  // cari event berdasarkan field id
+  const checkKomik = await Komik.findOne({
+    _id: id,
+    vendor: req.user.userId,
+  });
+
+  // jika id result false / null maka akan menampilkan error `Tidak ada acara dengan id` yang dikirim client
+  if (!checkKomik)
+    throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
+
+  checkKomik.statusKomik = statusKomik;
+
+  await checkKomik.save();
+
+  return checkKomik;
+};
+
 module.exports = {
   getAllKomik,
   createKomik,
@@ -153,4 +174,5 @@ module.exports = {
   updateKomik,
   deleteKomik,
   checkingKomik,
+  changeStatusKomik,
 };

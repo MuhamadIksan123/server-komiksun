@@ -4,6 +4,7 @@ const {
   updateChapter,
   createChapter,
   deleteChapter,
+  changeStatusChapter
 } = require("../../../services/mongoose/chapter");
 
 const { StatusCodes } = require("http-status-codes");
@@ -68,10 +69,23 @@ const destroy = async (req, res, next) => {
   }
 };
 
+const changeStatus = async (req, res, next) => {
+  try {
+    const result = await changeStatusChapter(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   index,
   find,
   update,
   destroy,
   create,
+  changeStatus
 };

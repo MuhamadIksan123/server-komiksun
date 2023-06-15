@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express();
-const { create, index, find, update, destroy } = require("./controller");
+const { create, index, find, update, destroy, changeStatus } = require("./controller");
 const {
   authenticateUser,
   authorizeRoles,
@@ -15,6 +15,12 @@ router.delete(
   authenticateUser,
   authorizeRoles("vendor"),
   destroy
+);
+router.put(
+  '/komik/:id/status',
+  authenticateUser,
+  authorizeRoles('admin'),
+  changeStatus
 );
 
 module.exports = router;

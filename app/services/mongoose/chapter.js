@@ -28,7 +28,6 @@ const getAllChapter = async (req) => {
       path: 'komik',
       select: '_id judul',
     })
-    .select('_id judul rilis file komik');
 
   return result;
 };
@@ -41,7 +40,7 @@ const createChapter = async (req) => {
   await checkingKomik(komik);
 
   // cari komik dengan field nama
-  const check = await Chapter.findOne({ judul, vendor: req.user.userId });
+  const check = await Chapter.findOne({ judul, vendor: req.user.userId, komik });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik duplikat
   if (check) throw new BadRequestError("judul komik duplikat");
@@ -72,7 +71,6 @@ const getOneChapter = async (req) => {
       path: "komik",
       select: "_id judul",
     })
-    .select("_id judul rilis file komik");
 
   if (!result) throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
 
@@ -92,6 +90,7 @@ const updateChapter = async (req) => {
     judul,
     _id: { $ne: id },
     vendor: req.user.userId,
+    komik
   });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik nama duplikat
@@ -132,6 +131,33 @@ const checkingChapter = async (id) => {
   return result;
 };
 
+const changeStatusChapter = async (req) => {
+  const { id } = req.params;
+  const { statusChapter } = req.body;
+
+  if (!['Publikasi', 'Tolak Publikasi'].includes(statusChapter)) {
+    throw new BadRequestError('Status harus Draft atau Published');
+  }
+
+  // cari event berdasarkan field id
+  const checkChapter = await Chapter.findOne({
+    _id: id,
+    vendor: req.user.userId,
+  });
+
+  // jika id result false / null maka akan menampilkan error `Tidak ada acara dengan id` yang dikirim client
+  if (!checkChapter)
+    throw new NotFoundError(`Tidak ada chapter dengan id :  ${id}`);
+
+  checkChapter.statusChapter = statusChapter;
+
+  await checkChapter.save();
+
+  return checkChapter;
+};
+
+
+
 module.exports = {
   getAllChapter,
   createChapter,
@@ -139,4 +165,5 @@ module.exports = {
   updateChapter,
   deleteChapter,
   checkingChapter,
+  changeStatusChapter
 };

@@ -1,24 +1,22 @@
-const multer = require("multer");
+const multer = require('multer');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "public/uploads/");
+    cb(null, 'public/uploads/');
   },
   filename: function (req, file, cb) {
-    cb(null, Math.floor(Math.random() * 99999999) + "-" + file.originalname);
+    cb(null, Math.floor(Math.random() * 99999999) + '-' + file.originalname);
   },
 });
 
 const fileFilter = (req, file, cb) => {
-  if (
-    file.mimetype === "application/pdf"
-  ) {
+  if (file.mimetype === 'application/pdf') {
     cb(null, true);
   } else {
     //reject file
     cb(
       {
-        message: "Unsupported file format",
+        message: 'Unsupported file format',
       },
       false
     );
@@ -28,7 +26,7 @@ const fileFilter = (req, file, cb) => {
 const uploadMiddleware = multer({
   storage,
   limits: {
-    fileSize: 3000000,
+    fileSize: 30000000,
   },
   fileFilter: fileFilter,
 });
