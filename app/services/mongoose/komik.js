@@ -72,7 +72,6 @@ const getOneKomik = async (req) => {
 
   const result = await Komik.findOne({
     _id: id,
-    vendor: req.user.userId,
   })
     .populate({
       path: 'image',
@@ -153,7 +152,6 @@ const changeStatusKomik = async (req) => {
   // cari event berdasarkan field id
   const checkKomik = await Komik.findOne({
     _id: id,
-    vendor: req.user.userId,
   });
 
   // jika id result false / null maka akan menampilkan error `Tidak ada acara dengan id` yang dikirim client

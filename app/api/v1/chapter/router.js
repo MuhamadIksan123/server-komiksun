@@ -7,7 +7,12 @@ const {
   authorizeRoles,
 } = require("../../../middlewares/auth");
 
-router.get("/chapter", authenticateUser, authorizeRoles("vendor"), index);
+router.get(
+  '/chapter',
+  authenticateUser,
+  authorizeRoles('vendor', 'admin'),
+  index
+);
 router.get("/chapter/:id", authenticateUser, authorizeRoles("vendor"), find);
 router.post("/chapter", authenticateUser, authorizeRoles("vendor"), create);
 router.put("/chapter/:id", authenticateUser, authorizeRoles("vendor"), update);

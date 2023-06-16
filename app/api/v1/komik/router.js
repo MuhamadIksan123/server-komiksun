@@ -7,7 +7,12 @@ const {
 } = require("../../../middlewares/auth");
 
 router.get("/komik", authenticateUser, authorizeRoles('vendor', 'admin'), index);
-router.get("/komik/:id", authenticateUser, authorizeRoles("vendor"), find);
+router.get(
+  '/komik/:id',
+  authenticateUser,
+  authorizeRoles('vendor', 'admin'),
+  find
+);
 router.post("/komik", authenticateUser, authorizeRoles("vendor", 'admin'), create);
 router.put("/komik/:id", authenticateUser, authorizeRoles("vendor"), update);
 router.delete(

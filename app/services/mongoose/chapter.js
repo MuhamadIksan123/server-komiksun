@@ -9,7 +9,11 @@ const { NotFoundError, BadRequestError } = require("../../errors");
 const getAllChapter = async (req) => {
   const { keyword, komik } = req.query;
 
-  let condition = { vendor: req.user.userId };
+  let condition = {};
+
+  if (req.user.role !== 'admin') {
+    condition = { ...condition, vendor: req.user.userId };
+  }
 
   if (keyword) {
     condition = { ...condition, judul: { $regex: keyword, $options: "i" } };
@@ -59,8 +63,12 @@ const createChapter = async (req) => {
 const getOneChapter = async (req) => {
   const { id } = req.params;
 
+  if (req.user.role !== 'owner') {
+    condition = { ...condition, 'historyEvent.organizer': req.user.organizer };
+  }
+
   const result = await Chapter.findOne({
-    _id: id,
+    _id: id, 
     vendor: req.user.userId,
   })
     .populate({
@@ -141,8 +149,7 @@ const changeStatusChapter = async (req) => {
 
   // cari event berdasarkan field id
   const checkChapter = await Chapter.findOne({
-    _id: id,
-    vendor: req.user.userId,
+    _id: id
   });
 
   // jika id result false / null maka akan menampilkan error `Tidak ada acara dengan id` yang dikirim client
