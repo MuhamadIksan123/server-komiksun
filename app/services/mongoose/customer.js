@@ -95,7 +95,7 @@ const signinUser = async (req) => {
 
   const token = createJWT({ payload: createTokenUser(result) });
 
-  return token;
+  return {token, email: result.email};
 };
 
 const getAllGenre = async () => {
@@ -198,7 +198,11 @@ const getOneChapter = async (req) => {
 };
 
 const getAllTransaksi = async (req) => {
-  const result = await Transaksi.find({ customer: req.user.userId });
+  const result = await Transaksi.find({ customer: req.user.userId }).populate({
+    path: 'komik',
+    populate: { path: 'image', select: 'nama' },
+  });
+  console.log(result)
   return result;
 };
 
@@ -230,6 +234,9 @@ const checkoutOrder = async (req) => {
     sinopsis: checkingKomik.sinopsis,
     status: checkingKomik.status,
     price: checkingKomik.price,
+    jenis: checkingKomik.jenis,
+    rilis: checkingKomik.rilis,
+    statusKomik: checkingKomik.statusKomik,
     genre: checkingKomik.genre,
     image: checkingKomik.image,
     vendor: checkingKomik.vendor,
@@ -252,7 +259,24 @@ const checkoutOrder = async (req) => {
 const getAllPaymentByVendor = async (req) => {
   const { vendor } = req.params;
 
-  const result = await Payment.find({ vendor: vendor });
+  const result = await Payment.find({ vendor: vendor }).populate({
+    path: 'image',
+    select: '_id nama',
+  });
+
+  return result;
+};
+
+const getAllCustomer = async (req) => {
+  const result = await User.find({ role: 'customer' })
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: [],
+    });
 
   return result;
 };
@@ -270,5 +294,6 @@ module.exports = {
   getAllVendor,
   getOneVendor,
   getAllChapter,
-  getOneChapter
+  getOneChapter,
+  getAllCustomer,
 };

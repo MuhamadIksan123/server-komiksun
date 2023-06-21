@@ -11,8 +11,9 @@ const {
   getAllVendor,
   getOneVendor,
   getAllChapter,
-  getOneChapter
-} = require("../../../services/mongoose/customer");
+  getOneChapter,
+  getAllCustomer,
+} = require('../../../services/mongoose/customer');
 
 const { StatusCodes } = require("http-status-codes");
 
@@ -43,9 +44,10 @@ const activeUser = async (req, res, next) => {
 const signin = async (req, res, next) => {
   try {
     const result = await signinUser(req);
+    console.log(result);
 
     res.status(StatusCodes.OK).json({
-      data: { token: result },
+      data: { token: result.token, email: result.email },
     });
   } catch (err) {
     next(err);
@@ -174,6 +176,18 @@ const getDetailChapter = async (req, res, next) => {
   }
 };
 
+const getAllReader = async (req, res, next) => {
+  try {
+    const result = await getAllCustomer(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   signup,
   activeUser,
@@ -188,5 +202,6 @@ module.exports = {
   getAllWriter,
   getDetailWriter,
   getAllLandingChapter,
-  getDetailChapter
+  getDetailChapter,
+  getAllReader
 };
