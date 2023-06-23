@@ -77,7 +77,10 @@ const signinUser = async (req) => {
     throw new BadRequestError('Please provide email and password');
   }
 
-  const result = await User.findOne({ email: email });
+  const result = await User.findOne({ email: email }).populate({
+    path: 'image',
+    select: '_id nama',
+  });
 
   if (!result) {
     throw new UnauthorizedError('Invalid Credentials');
@@ -85,6 +88,10 @@ const signinUser = async (req) => {
 
   if (result.status === 'tidak aktif') {
     throw new UnauthorizedError('Akun anda belum aktif');
+  }
+
+  if (result.role !== 'customer') {
+    throw new UnauthorizedError('Role akun harus customer');
   }
 
   const isPasswordCorrect = await result.comparePassword(password);
@@ -95,7 +102,7 @@ const signinUser = async (req) => {
 
   const token = createJWT({ payload: createTokenUser(result) });
 
-  return {token, email: result.email};
+  return {token, dataUser: result};
 };
 
 const getAllGenre = async () => {
@@ -202,7 +209,6 @@ const getAllTransaksi = async (req) => {
     path: 'komik',
     populate: { path: 'image', select: 'nama' },
   });
-  console.log(result)
   return result;
 };
 

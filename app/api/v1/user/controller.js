@@ -4,7 +4,8 @@ const {
   getAllUser,
   getOneUser,
   updateUser,
-  deleteUser
+  deleteUser,
+  changeStatusUser
 } = require("../../../services/mongoose/user");
 const { StatusCodes } = require("http-status-codes");
 
@@ -66,11 +67,24 @@ const deleteCMSUser = async (req, res, next) => {
   }
 };
 
+const changeStatus = async (req, res, next) => {
+  try {
+    const result = await changeStatusUser(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // Export fungsi create pada controller categories
 module.exports = {
   createCMSUser,
   getAllCMSUser,
   getOneCMSUser,
   updateCMSUser,
-  deleteCMSUser
+  deleteCMSUser,
+  changeStatus
 };

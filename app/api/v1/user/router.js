@@ -6,6 +6,7 @@ const {
   getOneCMSUser,
   updateCMSUser,
   deleteCMSUser,
+  changeStatus
 } = require("./controller");
 
 const {
@@ -32,6 +33,12 @@ router.delete(
   authenticateUser,
   authorizeRoles("admin"),
   deleteCMSUser
+);
+router.put(
+  '/user/:id/status',
+  authenticateUser,
+  authorizeRoles('admin'),
+  changeStatus
 );
 
 module.exports = router;

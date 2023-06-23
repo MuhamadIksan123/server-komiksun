@@ -23,8 +23,6 @@ const otpMail = async (email, data) => {
       subject: 'Otp for registration is: ',
       html: Mustache.render(template, data),
     };
-    console.log('message');
-    console.log(message);
 
     return await transporter.sendMail(message);
   } catch (ex) {

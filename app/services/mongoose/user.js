@@ -87,11 +87,11 @@ const updateUser = async (req) => {
   } = req.body;
 
   const check = await User.findOne({
-    nama,
+    email,
     _id: { $ne: id },
   });
 
-  if (check) throw new BadRequestError("Nama user duplikat");
+  if (check) throw new BadRequestError("Email user duplikat");
 
   const result = await User.findOneAndUpdate(
     { _id: id },
@@ -124,4 +124,35 @@ const deleteUser = async (req) => {
   return result;
 };
 
-module.exports = { createUser, getAllUser, getOneUser, updateUser, deleteUser };
+const changeStatusUser = async (req) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!['aktif', 'tidak aktif'].includes(status)) {
+    throw new BadRequestError('Status user harus aktif atau tidak aktif');
+  }
+
+  // cari event berdasarkan field id
+  const checkUser = await User.findOne({
+    _id: id,
+  });
+
+  // jika id result false / null maka akan menampilkan error `Tidak ada acara dengan id` yang dikirim client
+  if (!checkUser)
+    throw new NotFoundError(`Tidak ada user dengan id :  ${id}`);
+
+  checkUser.status = status;
+
+  await checkUser.save();
+
+  return checkUser;
+};
+
+module.exports = {
+  createUser,
+  getAllUser,
+  getOneUser,
+  updateUser,
+  deleteUser,
+  changeStatusUser,
+};

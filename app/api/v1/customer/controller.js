@@ -44,10 +44,9 @@ const activeUser = async (req, res, next) => {
 const signin = async (req, res, next) => {
   try {
     const result = await signinUser(req);
-    console.log(result);
 
     res.status(StatusCodes.OK).json({
-      data: { token: result.token, email: result.email },
+      data: { token: result.token, dataUser: result.dataUser },
     });
   } catch (err) {
     next(err);
