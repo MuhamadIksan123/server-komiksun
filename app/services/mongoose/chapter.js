@@ -7,7 +7,7 @@ const { checkingKomik } = require("./komik");
 const { NotFoundError, BadRequestError } = require("../../errors");
 
 const getAllChapter = async (req) => {
-  const { keyword, komik } = req.query;
+  const { keyword, komik, statusChapter } = req.query;
 
   let condition = {};
 
@@ -21,6 +21,10 @@ const getAllChapter = async (req) => {
 
   if (komik) {
     condition = { ...condition, komik: komik };
+  }
+
+  if (statusChapter) {
+    condition = { ...condition, statusChapter: statusChapter };
   }
 
   const result = await Chapter.find(condition)

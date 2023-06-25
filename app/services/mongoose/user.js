@@ -100,11 +100,11 @@ const updateUser = async (req) => {
   } = req.body;
 
   const check = await User.findOne({
-    email,
+    nama,
     _id: { $ne: id },
   });
 
-  if (check) throw new BadRequestError('Email user duplikat');
+  if (check) throw new BadRequestError('Nama user duplikat');
 
   const result = await User.findOneAndUpdate(
     { _id: id },
