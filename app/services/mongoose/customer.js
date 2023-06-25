@@ -20,7 +20,7 @@ const signupUser = async (req) => {
   // jika email dan status tidak aktif
   let result = await User.findOne({
     email,
-    status: "tidak aktif",
+    statusUser: "tidak aktif",
   });
 
   if (result) {
@@ -60,7 +60,7 @@ const activateUser = async (req) => {
   const result = await User.findByIdAndUpdate(
     check._id,
     {
-      status: "aktif",
+      statusUser: "aktif",
     },
     { new: true }
   );
@@ -86,7 +86,7 @@ const signinUser = async (req) => {
     throw new UnauthorizedError('Invalid Credentials');
   }
 
-  if (result.status === 'tidak aktif') {
+  if (result.statusUser === 'tidak aktif') {
     throw new UnauthorizedError('Akun anda belum aktif');
   }
 
@@ -122,9 +122,9 @@ const getAllKomik = async (req) => {
     })
     .populate({
       path: 'vendor',
-      select: '_id nama role email lahir status otp nomor image komik',
+      select: '_id nama role email lahir statusUser otp nomor image komik',
     })
-    .select('_id judul penulis sinopsis status price genre image vendor');
+    .select('_id judul penulis sinopsis statusUser price genre image vendor');
 
   return result;
 };

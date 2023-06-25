@@ -5,33 +5,33 @@ const userSchema = new mongoose.Schema(
   {
     nama: {
       type: String,
-      required: [true, "Nama harus diisi"],
+      required: [true, 'Nama harus diisi'],
       minlength: 3,
       maxlength: 50,
     },
     email: {
       type: String,
       unique: true,
-      required: [true, "Email harus diisi"],
+      required: [true, 'Email harus diisi'],
     },
     password: {
       type: String,
-      required: [true, "Password harus diisi"],
+      required: [true, 'Password harus diisi'],
       minlength: 6,
     },
     role: {
       type: String,
-      enum: ["customer", "vendor", "admin"],
-      required: [true, "Role harus diisi"],
+      enum: ['customer', 'vendor', 'admin'],
+      required: [true, 'Role harus diisi'],
     },
     lahir: {
       type: Date,
       default: new Date(),
     },
-    status: {
+    statusUser: {
       type: String,
-      enum: ["aktif", "tidak aktif"],
-      default: "tidak aktif",
+      enum: ['aktif', 'tidak aktif'],
+      default: 'tidak aktif',
     },
     otp: {
       type: String,
@@ -39,16 +39,22 @@ const userSchema = new mongoose.Schema(
     },
     nomor: {
       type: String,
-      default: "-",
+      default: '-',
     },
     komik: {
       type: Array,
       default: [],
     },
+    biodata: {
+      type: String,
+      minlength: [30, 'Panjang biodata minimal 30 karakter'],
+      maxLength: [400, 'Panjang biodata maksimal 400 karakter'],
+      required: [true, 'Biodata komik harus diisi'],
+    },
     image: {
       type: mongoose.Types.ObjectId,
-      ref: "Image",
-      default: '644a329c733339974c1e1335'
+      ref: 'Image',
+      default: '644a329c733339974c1e1335',
     },
   },
   { timestamps: true }
