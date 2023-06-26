@@ -27,7 +27,8 @@ let chapterSchema = Schema(
     komik: {
       type: mongoose.Types.ObjectId,
       ref: 'Komik',
-      required: true,
+      required: [true, 'Komik harus diisi'],
+
     },
     vendor: {
       type: mongoose.Types.ObjectId,

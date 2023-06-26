@@ -67,10 +67,6 @@ const createChapter = async (req) => {
 const getOneChapter = async (req) => {
   const { id } = req.params;
 
-  if (req.user.role !== 'owner') {
-    condition = { ...condition, 'historyEvent.organizer': req.user.organizer };
-  }
-
   const result = await Chapter.findOne({
     _id: id, 
     vendor: req.user.userId,

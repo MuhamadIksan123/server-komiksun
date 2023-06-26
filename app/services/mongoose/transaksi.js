@@ -1,11 +1,11 @@
-const Transaksi = require("../../api/v1/transaksi/model");
+const Transaksi = require('../../api/v1/transaksi/model');
 
 const getAllTransaksi = async (req) => {
   const { limit = 10, page = 1, startDate, endDate } = req.query;
   let condition = {};
 
-  if (req.user.role !== "admin") {
-    condition = { ...condition, "historyKomik.vendor": req.user.userId };
+  if (req.user.role !== 'admin') {
+    condition = { ...condition, 'historyKomik.vendor': req.user.userId };
   }
 
   if (startDate && endDate) {
@@ -23,7 +23,10 @@ const getAllTransaksi = async (req) => {
   }
 
   const result = await Transaksi.find(condition)
-    .populate({ path: "komik" })
+    .populate({
+      path: 'komik',
+      populate: { path: 'vendor', select: 'nama' },
+    })
     .limit(limit)
     .skip(limit * (page - 1));
 
