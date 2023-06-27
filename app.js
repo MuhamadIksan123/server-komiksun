@@ -19,6 +19,8 @@ const authRouter = require("./app/api/v1/auth/router");
 const refreshToken = require('./app/api/v1/userRefreshToken/router');
 const customerRouter = require("./app/api/v1/customer/router");
 const transaksiRouter = require("./app/api/v1/transaksi/router");
+const contactRouter = require('./app/api/v1/contact/router');
+
 
 
 // middlewares
@@ -52,6 +54,7 @@ app.use(`${v1}/cms`, userRouter);
 app.use(`${v1}/cms`, authRouter);
 app.use(`${v1}/cms`, refreshToken);
 app.use(`${v1}/cms`, transaksiRouter);
+app.use(`${v1}/cms`, contactRouter);
 app.use(v1, customerRouter);
 
 

@@ -14,8 +14,9 @@ const {
   getDetailWriter,
   getAllLandingChapter,
   getDetailChapter,
-  getAllReader
-} = require("./controller");
+  getAllReader,
+  createContactCustomer,
+} = require('./controller');
 
 const { authenticateUser } = require("../../../middlewares/auth");
 
@@ -33,6 +34,8 @@ router.get('/vendor/:id', getDetailWriter);
 router.get('/chapter', getAllLandingChapter);
 router.get('/chapter/:id', getDetailChapter);
 router.get('/customer', getAllReader);
+router.post('/contact', createContactCustomer);
+
 
 
 

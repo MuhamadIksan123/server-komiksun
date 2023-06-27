@@ -4,6 +4,8 @@ const Genre = require('../../api/v1/genre/model');
 const Transaksi = require("../../api/v1/transaksi/model");
 const Payment = require("../../api/v1/payment/model");
 const Chapter = require('../../api/v1/chapter/model');
+const Contact = require('../../api/v1/contact/model');
+
 
 const {
   BadRequestError,
@@ -287,6 +289,14 @@ const getAllCustomer = async (req) => {
   return result;
 };
 
+const createContact = async (req) => {
+  const { nama, email, isiPesan, date } = req.body;
+
+  const result = await Contact.create({ nama, email, isiPesan, date });
+
+  return result;
+};
+
 module.exports = {
   signupUser,
   activateUser,
@@ -302,4 +312,5 @@ module.exports = {
   getAllChapter,
   getOneChapter,
   getAllCustomer,
+  createContact,
 };
