@@ -13,6 +13,7 @@ const {
   getAllChapter,
   getOneChapter,
   getAllCustomer,
+  getOneCustomer,
   createContact,
 } = require('../../../services/mongoose/customer');
 
@@ -150,8 +151,6 @@ const getDetailWriter = async (req, res, next) => {
   }
 };
 
-
-
 const getAllLandingChapter = async (req, res, next) => {
   try {
     const result = await getAllChapter(req);
@@ -179,6 +178,18 @@ const getDetailChapter = async (req, res, next) => {
 const getAllReader = async (req, res, next) => {
   try {
     const result = await getAllCustomer(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getDetailReader = async (req, res, next) => {
+  try {
+    const result = await getOneCustomer(req);
 
     res.status(StatusCodes.OK).json({
       data: result,
@@ -216,5 +227,6 @@ module.exports = {
   getAllLandingChapter,
   getDetailChapter,
   getAllReader,
+  getDetailReader,
   createContactCustomer,
 };

@@ -15,6 +15,7 @@ const {
   getAllLandingChapter,
   getDetailChapter,
   getAllReader,
+  getDetailReader,
   createContactCustomer,
 } = require('./controller');
 
@@ -34,6 +35,7 @@ router.get('/vendor/:id', getDetailWriter);
 router.get('/chapter', getAllLandingChapter);
 router.get('/chapter/:id', getDetailChapter);
 router.get('/customer', getAllReader);
+router.get('/customer/:id', getDetailReader);
 router.post('/contact', createContactCustomer);
 
 

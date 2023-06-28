@@ -79,11 +79,11 @@ const signinUser = async (req) => {
     throw new BadRequestError('Please provide email and password');
   }
 
-  const result = await User.findOne({ email: email }).populate({
-    path: 'image',
-    select: '_id nama',
-  });
-
+  const result = await User.findOne({ email: email })
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
   if (!result) {
     throw new UnauthorizedError('Invalid Credentials');
   }
@@ -289,6 +289,23 @@ const getAllCustomer = async (req) => {
   return result;
 };
 
+const getOneCustomer = async (req) => {
+  const { id } = req.params;
+  const result = await User.findOne({ _id: id, role: 'customer' })
+    .populate({
+      path: 'image',
+      select: '_id nama',
+    })
+    .populate({
+      path: 'komik',
+      select: [],
+    });
+
+  if (!result) throw new NotFoundError(`Tidak ada vendor dengan id :  ${id}`);
+
+  return result;
+};
+
 const createContact = async (req) => {
   const { nama, email, isiPesan, date } = req.body;
 
@@ -312,5 +329,6 @@ module.exports = {
   getAllChapter,
   getOneChapter,
   getAllCustomer,
+  getOneCustomer,
   createContact,
 };
