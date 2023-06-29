@@ -1,4 +1,4 @@
-const { getAllTransaksi } = require("../../../services/mongoose/transaksi");
+const { getAllTransaksi, getOneTransaksi, changeStatusTransaksi } = require("../../../services/mongoose/transaksi");
 
 const { StatusCodes } = require("http-status-codes");
 
@@ -14,6 +14,32 @@ const index = async (req, res, next) => {
   }
 };
 
+const find = async (req, res, next) => {
+  try {
+    const result = await getOneTransaksi(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const changeStatus = async (req, res, next) => {
+  try {
+    const result = await changeStatusKomik(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   index,
+  find,
+  changeStatus
 };

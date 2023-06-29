@@ -219,7 +219,7 @@ const getAllTransaksi = async (req) => {
  * TODO: Ambil data email dari personal detail
  *  */
 const checkoutOrder = async (req) => {
-  const { komik, personalDetail, payment } = req.body;
+  const { komik, statusTransaksi, personalDetail, payment, image } = req.body;
 
   const checkingKomik = await Komik.findOne({ _id: komik });
   if (!checkingKomik) {
@@ -258,6 +258,8 @@ const checkoutOrder = async (req) => {
     komik,
     historyKomik,
     payment,
+    statusTransaksi: 'Menunggu Konfirmasi',
+    image
   });
 
   await result.save();

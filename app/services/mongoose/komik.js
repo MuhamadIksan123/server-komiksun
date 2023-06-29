@@ -93,7 +93,6 @@ const getOneKomik = async (req) => {
 
 const updateKomik = async (req) => {
   const { id } = req.params;
-  console.log(req.body);
   const { judul, penulis, sinopsis, status, price, jenis, rilis, genre, image } = req.body;
 
   // cari image dengan field image dan genre

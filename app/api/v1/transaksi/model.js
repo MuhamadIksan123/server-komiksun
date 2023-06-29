@@ -6,6 +6,16 @@ const transaksiSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    statusTransaksi: {
+      type: String,
+      enum: ['Menunggu Konfirmasi', 'Berhasil', 'Gagal'],
+      default: 'Menunggu Konfirmasi',
+    },
+    image: {
+      type: mongoose.Types.ObjectId,
+      ref: 'Image',
+      required: [true, 'Bukti pembayaran harus diupload'],
+    },
     personalDetail: {
       firstName: {
         type: String,
