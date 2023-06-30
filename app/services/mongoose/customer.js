@@ -126,7 +126,6 @@ const getAllKomik = async (req) => {
       path: 'vendor',
       select: '_id nama role email lahir statusUser otp nomor image komik',
     })
-    .select('_id judul penulis sinopsis statusUser price genre image vendor');
 
   return result;
 };

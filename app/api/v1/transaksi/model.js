@@ -8,7 +8,7 @@ const transaksiSchema = new mongoose.Schema(
     },
     statusTransaksi: {
       type: String,
-      enum: ['Menunggu Konfirmasi', 'Berhasil', 'Gagal'],
+      enum: ['Menunggu Konfirmasi', 'Berhasil', 'Ditolak'],
       default: 'Menunggu Konfirmasi',
     },
     image: {

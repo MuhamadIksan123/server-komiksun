@@ -44,9 +44,13 @@ const getOneTransaksi = async (req) => {
     .populate({
       path: 'image',
       select: '_id nama',
+    })
+    .populate({
+      path: 'payment',
+      select: '_id type nomor',
     });
 
-    if (!result) throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
+    if (!result) throw new NotFoundError(`Tidak ada transaksi dengan id :  ${id}`);
 
     return result;
 };
@@ -66,7 +70,7 @@ const changeStatusTransaksi = async (req) => {
 
   // jika id result false / null maka akan menampilkan error `Tidak ada acara dengan id` yang dikirim client
   if (!checkTransaksi)
-    throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
+    throw new NotFoundError(`Tidak ada transaksi dengan id :  ${id}`);
 
   checkTransaksi.statusTransaksi = statusTransaksi;
 

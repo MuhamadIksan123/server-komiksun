@@ -28,7 +28,7 @@ const find = async (req, res, next) => {
 
 const changeStatus = async (req, res, next) => {
   try {
-    const result = await changeStatusKomik(req);
+    const result = await changeStatusTransaksi(req);
 
     res.status(StatusCodes.OK).json({
       data: result,
