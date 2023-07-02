@@ -113,7 +113,7 @@ const getAllGenre = async () => {
 };
 
 const getAllKomik = async (req) => {
-  const result = await Komik.find()
+  const result = await Komik.find({ statusKomik: 'Publikasi' })
     .populate({
       path: 'image',
       select: '_id nama',
@@ -125,7 +125,7 @@ const getAllKomik = async (req) => {
     .populate({
       path: 'vendor',
       select: '_id nama role email lahir statusUser otp nomor image komik',
-    })
+    });
 
   return result;
 };
@@ -143,7 +143,7 @@ const getOneKomik = async (req) => {
 };
 
 const getAllVendor = async (req) => {
-  const result = await User.find({ role: 'vendor' })
+  const result = await User.find({ role: 'vendor', statusUser: 'aktif' })
     .populate({
       path: 'image',
       select: '_id nama',
@@ -174,7 +174,7 @@ const getOneVendor = async (req) => {
 };
 
 const getAllChapter = async (req) => {
-  const result = await Chapter.find()
+  const result = await Chapter.find({ statusChapter: 'Publikasi' })
     .populate({
       path: 'file',
       select: '_id nama',
@@ -182,7 +182,7 @@ const getAllChapter = async (req) => {
     .populate({
       path: 'komik',
       select: '_id judul',
-    })
+    });
 
   return result;
 };

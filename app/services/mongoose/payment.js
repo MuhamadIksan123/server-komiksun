@@ -21,7 +21,7 @@ const createPayment = async (req) => {
 
   await checkingImage(image);
 
-  const check = await Payment.findOne({ type });
+  const check = await Payment.findOne({ type, vendor: req.user.userId });
 
   if (check) throw new BadRequestError('Tipe pembayaran duplikat');
 

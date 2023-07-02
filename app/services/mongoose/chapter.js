@@ -51,7 +51,7 @@ const createChapter = async (req) => {
   const check = await Chapter.findOne({ judul, vendor: req.user.userId, komik });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik duplikat
-  if (check) throw new BadRequestError("judul komik duplikat");
+  if (check) throw new BadRequestError("judul chapter duplikat");
 
   const result = await Chapter.create({
     judul,

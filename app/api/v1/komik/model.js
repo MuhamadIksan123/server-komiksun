@@ -6,13 +6,13 @@ let komikSchema = Schema(
     judul: {
       type: String,
       minlength: [5, 'Panjang judul komik minimal 5 karakter'],
-      maxLength: [20, 'Panjang judul komik maksimal 20 karakter'],
+      maxLength: [30, 'Panjang judul komik maksimal 30 karakter'],
       required: [true, 'Judul komik harus diisi'],
     },
     penulis: {
       type: String,
       minlength: [5, 'Panjang nama penulis minimal 5 karakter'],
-      maxLength: [20, 'Panjang nama penulis maksimal 20 karakter'],
+      maxLength: [30, 'Panjang nama penulis maksimal 30 karakter'],
       required: [true, 'Penulis komik harus diisi'],
     },
     sinopsis: {
