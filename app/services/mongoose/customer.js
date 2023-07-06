@@ -192,7 +192,7 @@ const getOneChapter = async (req) => {
   const result = await Chapter.findOne({ _id: id })
     .populate({
       path: 'file',
-      select: '_id nama',
+      select: '_id nama base64',
     })
     .populate({
       path: 'komik',
@@ -218,7 +218,7 @@ const getAllTransaksi = async (req) => {
  * TODO: Ambil data email dari personal detail
  *  */
 const checkoutOrder = async (req) => {
-  const { komik, statusTransaksi, personalDetail, payment, image } = req.body;
+  const { komik, personalDetail, payment, image } = req.body;
 
   const checkingKomik = await Komik.findOne({ _id: komik });
   if (!checkingKomik) {

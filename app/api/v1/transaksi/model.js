@@ -72,7 +72,7 @@ const transaksiSchema = new mongoose.Schema(
       penulis: {
         type: String,
         minlength: 5,
-        maxLength: 20,
+        maxLength: 30,
         required: [true, 'Penulis komik harus diisi'],
       },
       sinopsis: {
