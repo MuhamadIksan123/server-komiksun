@@ -1,31 +1,51 @@
 const Files = require('../../api/v1/files/model');
+const fs = require('fs');
 
-const createFiles = async (req) => {
-  const result = await Files.create({
-    nama: req.file
-      ? `uploads/${req.file.filename}`
-      : 'uploads/berkas/default.pdf',
-  });
+const createFiles = async (req, res) => {
+  const file = req.file;
+
+  // Memeriksa apakah file ada
+  if (!file) {
+    return res.status(400).send('File tidak ditemukan.');
+  }
+
+  // Mengubah file ke base64
+  const base64Data = file.buffer.toString('base64');
+
+  const result = await Files.create({ nama: file.originalname, base64Data });
 
   return result;
 };
 
 const getOneFile = async (req, res) => {
-  const { id } = req.params;
-  const result = await Files.findOne({ _id: id });
+  const fileId = req.params.id;
 
-  if (!result) throw new NotFoundError(`Tidak ada file dengan id : ${id}`);
+  // Cari file di database berdasarkan ID
+  const result = await Files.findById(fileId);
 
-  const path = `public/${result.nama}`;
+  if (!result) {
+    return res.status(404).send('File tidak ditemukan.');
+  }
 
-  return path;
+  return result;
 };
+
+// const getOneFile = async (req, res) => {
+//   const { id } = req.params;
+//   const result = await Files.findOne({ _id: id });
+
+//   if (!result) throw new NotFoundError(`Tidak ada file dengan id : ${id}`);
+
+//   const path = `public/${result.nama}`;
+
+//   return path;
+// };
 
 // tambahkan function checking File
 const checkingFile = async (id) => {
   const result = await Files.findOne({ _id: id });
 
-  if (!result) throw new NotFoundError(`Tidak ada File dengan id :  ${id}`);
+  if (!result) throw new NotFoundError(`File dengan id ${id} belum terupload, harap tunggu sebentar`);
 
   return result;
 };

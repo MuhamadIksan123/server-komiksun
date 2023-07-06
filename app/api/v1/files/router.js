@@ -1,13 +1,15 @@
 const express = require('express');
 const router = express();
-const { create, find } = require('./controller');
-const upload = require('../../../middlewares/multer-file');
+const { create, download } = require('./controller');
+const upload = require('../../../middlewares/multer-pdf');
 
+// router.post('/files', create);
+
+// Route untuk mengupload file
 router.post('/files', upload.single('berkas'), create);
-// router.post('/files', (req, res) => {
-//   console.log(req?.file);
-//   console.log(req?.file?.filename);
-//   return res.status(200);
-// });
-router.get('/files/:id', find);
+// router.get('/files/:id', find);
+
+// Endpoint untuk mengunduh file berdasarkan ID
+router.get('/files/:id', download);
+
 module.exports = router;

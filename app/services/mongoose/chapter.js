@@ -41,10 +41,10 @@ const getAllChapter = async (req) => {
 };
 
 const createChapter = async (req) => {
+  console.log(req.body);
   const { judul, rilis, file, komik } = req.body;
 
   // cari image dengan field image
-  await checkingFile(file);
   await checkingKomik(komik);
 
   // cari komik dengan field nama
@@ -52,6 +52,10 @@ const createChapter = async (req) => {
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik duplikat
   if (check) throw new BadRequestError("judul chapter duplikat");
+
+  if(file === '') {
+    throw new BadRequestError('Sedang upload file, klik lagi dalam 5 detik');
+  }
 
   const result = await Chapter.create({
     judul,
