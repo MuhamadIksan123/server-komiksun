@@ -41,7 +41,6 @@ const getAllKomik = async (req) => {
 };
 
 const createKomik = async (req) => {
-  console.log(req.body);
   const { judul, penulis, sinopsis, status, price, jenis, rilis, genre, image } = req.body;
 
   // cari image dengan field image

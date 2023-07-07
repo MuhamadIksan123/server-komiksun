@@ -20,7 +20,7 @@ const errorHandlerMiddleware = (err, req, res, next) => {
     customError.statusCode = 400;
   }
   if (err.name === "CastError") {
-    customError.msg = `No item found with id : ${err.value}`;
+    customError.msg = `Ada yang belum terisi atau format salah`;
     customError.statusCode = 404;
   }
 

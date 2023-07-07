@@ -1,20 +1,20 @@
-const User = require("../../api/v1/user/model");
-const Komik = require("../../api/v1/komik/model");
+const User = require('../../api/v1/user/model');
+const Komik = require('../../api/v1/komik/model');
 const Genre = require('../../api/v1/genre/model');
-const Transaksi = require("../../api/v1/transaksi/model");
-const Payment = require("../../api/v1/payment/model");
+const Transaksi = require('../../api/v1/transaksi/model');
+const Payment = require('../../api/v1/payment/model');
 const Chapter = require('../../api/v1/chapter/model');
 const Contact = require('../../api/v1/contact/model');
-
 
 const {
   BadRequestError,
   NotFoundError,
   UnauthorizedError,
-} = require("../../errors");
-const { createTokenUser, createJWT } = require("../../utils");
+} = require('../../errors');
+const { createTokenUser, createJWT, createRefreshJWT } = require('../../utils');
+const { createUserRefreshToken } = require('./refreshToken');
 
-const { otpMail } = require("../mail");
+const { otpMail } = require('../mail');
 
 const signupUser = async (req) => {
   const { nama, email, password, role } = req.body;
@@ -22,7 +22,7 @@ const signupUser = async (req) => {
   // jika email dan status tidak aktif
   let result = await User.findOne({
     email,
-    statusUser: "tidak aktif",
+    statusUser: 'tidak aktif',
   });
 
   if (result) {
@@ -55,14 +55,14 @@ const activateUser = async (req) => {
     email,
   });
 
-  if (!check) throw new NotFoundError("User belum terdaftar");
+  if (!check) throw new NotFoundError('User belum terdaftar');
 
-  if (check && check.otp !== otp) throw new BadRequestError("Kode otp salah");
+  if (check && check.otp !== otp) throw new BadRequestError('Kode otp salah');
 
   const result = await User.findByIdAndUpdate(
     check._id,
     {
-      statusUser: "aktif",
+      statusUser: 'aktif',
     },
     { new: true }
   );
@@ -79,21 +79,16 @@ const signinUser = async (req) => {
     throw new BadRequestError('Please provide email and password');
   }
 
-  const result = await User.findOne({ email: email })
-    .populate({
-      path: 'image',
-      select: '_id nama',
-    })
+  const result = await User.findOne({ email: email }).populate({
+    path: 'image',
+    select: '_id nama',
+  });
   if (!result) {
     throw new UnauthorizedError('Invalid Credentials');
   }
 
   if (result.statusUser === 'tidak aktif') {
     throw new UnauthorizedError('Akun anda belum aktif');
-  }
-
-  if (result.role !== 'customer') {
-    throw new UnauthorizedError('Role akun harus customer');
   }
 
   const isPasswordCorrect = await result.comparePassword(password);
@@ -103,8 +98,19 @@ const signinUser = async (req) => {
   }
 
   const token = createJWT({ payload: createTokenUser(result) });
+  const refreshToken = createRefreshJWT({ payload: createTokenUser(result) });
+  await createUserRefreshToken({
+    refreshToken,
+    user: result._id,
+  });
 
-  return {token, dataUser: result};
+  return {
+    token,
+    dataUser: result,
+    refreshToken,
+    role: result.role,
+    email: result.email,
+  };
 };
 
 const getAllGenre = async () => {
@@ -135,7 +141,7 @@ const getOneKomik = async (req) => {
   const result = await Komik.findOne({ _id: id })
     .populate('genre')
     .populate({ path: 'vendor', populate: 'image' })
-    .populate('image');;
+    .populate('image');
 
   if (!result) throw new NotFoundError(`Tidak ada acara dengan id :  ${id}`);
 
@@ -198,7 +204,6 @@ const getOneChapter = async (req) => {
       path: 'komik',
       select: '_id judul',
     });
-    
 
   if (!result) throw new NotFoundError(`Tidak ada vendor dengan id :  ${id}`);
 
@@ -258,7 +263,7 @@ const checkoutOrder = async (req) => {
     historyKomik,
     payment,
     statusTransaksi: 'Menunggu Konfirmasi',
-    image
+    image,
   });
 
   await result.save();

@@ -41,7 +41,6 @@ const getAllChapter = async (req) => {
 };
 
 const createChapter = async (req) => {
-  console.log(req.body);
   const { judul, rilis, file, komik } = req.body;
 
   // cari image dengan field image

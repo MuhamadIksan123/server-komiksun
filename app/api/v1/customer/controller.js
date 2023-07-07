@@ -48,7 +48,13 @@ const signin = async (req, res, next) => {
     const result = await signinUser(req);
 
     res.status(StatusCodes.OK).json({
-      data: { token: result.token, dataUser: result.dataUser },
+      data: {
+        token: result.token,
+        dataUser: result.dataUser,
+        refreshToken: result.refreshToken,
+        role: result.role,
+        email: result.email,
+      },
     });
   } catch (err) {
     next(err);

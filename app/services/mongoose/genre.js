@@ -10,7 +10,6 @@ const getAllGenre = async () => {
 };
 
 const createGenre = async (req) => {
-  console.log(req.body);
   const { nama } = req.body;
   // cari genre dengan field genre
   const check = await Genre.findOne({ nama });
