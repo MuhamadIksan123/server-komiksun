@@ -198,7 +198,7 @@ const getOneChapter = async (req) => {
   const result = await Chapter.findOne({ _id: id })
     .populate({
       path: 'file',
-      select: '_id nama base64',
+      select: '_id nama base64Data',
     })
     .populate({
       path: 'komik',
