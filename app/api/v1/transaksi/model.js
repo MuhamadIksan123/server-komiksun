@@ -38,15 +38,6 @@ const transaksiSchema = new mongoose.Schema(
         default: 'Designer',
       },
     },
-    status: {
-      type: String,
-      enum: ['pending', 'paid'],
-      default: 'pending',
-    },
-    price: {
-      type: Number,
-      default: 0,
-    },
     customer: {
       type: mongoose.Types.ObjectId,
       ref: 'User',
