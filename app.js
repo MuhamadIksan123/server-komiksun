@@ -32,7 +32,7 @@ const v1 = '/api/v1';
 
 // Set up CORS configuration
 const corsOptions = {
-  origin: 'https://client-komiksun.vercel.app', // Replace with your actual client domain
+  origin: ['https://client-komiksun.vercel.app', 'https://landingpage-komiksun.vercel.app'],
 };
 
 app.use(cors(corsOptions));
