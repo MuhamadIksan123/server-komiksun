@@ -30,12 +30,7 @@ const handleErrorMidlleware = require('./app/middlewares/handler-error');
 // membuat variabel v1
 const v1 = '/api/v1';
 
-// Set up CORS configuration
-const corsOptions = {
-  origin: ['https://client-komiksun.vercel.app', 'https://landingpage-komiksun.vercel.app'],
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
