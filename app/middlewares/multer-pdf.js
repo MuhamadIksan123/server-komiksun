@@ -16,7 +16,7 @@ const fileFilter = (req, file, cb) => {
 
 const uploadMiddleware = multer({
   limits: {
-    fileSize: 15000000,
+    fileSize: 10000000,
   },
   fileFilter: fileFilter,
 });
