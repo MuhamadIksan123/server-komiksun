@@ -238,6 +238,21 @@ const checkoutOrder = async (req) => {
     );
   }
 
+  const checkingOrder = await Transaksi.findOne({
+    komik,
+    customer: req.user.userId,
+  });
+
+  if (checkingOrder) {
+    if (checkingOrder.komik.toString() === komik) {
+      if (checkingOrder.statusTransaksi === 'Menunggu Konfirmasi') {
+        throw new BadRequestError(
+          'Sudah order, mohon tunggu konfirmasi pembayaran'
+        );
+      }
+    }
+  }
+
   await checkingKomik.save();
 
   const historyKomik = {
