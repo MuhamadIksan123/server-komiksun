@@ -57,6 +57,9 @@ const activateUser = async (req) => {
 
   if (!check) throw new NotFoundError('User belum terdaftar');
 
+  if (otp === undefined || otp === null || otp === '')
+    throw new NotFoundError('Kode otp harus diisi');
+
   if (check && check.otp !== otp) throw new BadRequestError('Kode otp salah');
 
   const result = await User.findByIdAndUpdate(
