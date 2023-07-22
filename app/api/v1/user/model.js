@@ -35,7 +35,7 @@ const userSchema = new mongoose.Schema(
     },
     otp: {
       type: String,
-      required: true,
+      required: [true, 'Kode Otp harus diisi'],
     },
     nomor: {
       type: String,
