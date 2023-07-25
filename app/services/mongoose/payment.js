@@ -19,11 +19,17 @@ const getAllPayment = async (req) => {
 const createPayment = async (req) => {
   const { type, image, nomor } = req.body;
 
+  if (image === '') {
+    throw new BadRequestError('Belum ada image payment yang diupload');
+  }
+
   await checkingImage(image);
 
   const check = await Payment.findOne({ type, vendor: req.user.userId });
 
   if (check) throw new BadRequestError('Tipe pembayaran duplikat');
+
+  
 
   const result = await Payment.create({
     image,

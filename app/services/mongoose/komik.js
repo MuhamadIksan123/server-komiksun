@@ -9,7 +9,7 @@ const { NotFoundError, BadRequestError } = require('../../errors');
 const getAllKomik = async (req) => {
   const { keyword, genre, statusKomik } = req.query;
 
-  let condition = { };
+  let condition = {};
 
   if (req.user.role !== 'admin') {
     condition = { ...condition, vendor: req.user.userId };
@@ -35,13 +35,23 @@ const getAllKomik = async (req) => {
     .populate({
       path: 'genre',
       select: '_id nama',
-    })
+    });
 
   return result;
 };
 
 const createKomik = async (req) => {
-  const { judul, penulis, sinopsis, status, price, jenis, rilis, genre, image } = req.body;
+  const {
+    judul,
+    penulis,
+    sinopsis,
+    status,
+    price,
+    jenis,
+    rilis,
+    genre,
+    image,
+  } = req.body;
 
   // cari image dengan field image
   await checkingGenre(genre);
@@ -64,8 +74,7 @@ const createKomik = async (req) => {
     genre,
     image,
     vendor: req.user.userId,
-  })
-    
+  });
 
   return result;
 };
@@ -83,7 +92,7 @@ const getOneKomik = async (req) => {
     .populate({
       path: 'genre',
       select: '_id nama',
-    })
+    });
 
   if (!result) throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
 
@@ -92,7 +101,17 @@ const getOneKomik = async (req) => {
 
 const updateKomik = async (req) => {
   const { id } = req.params;
-  const { judul, penulis, sinopsis, status, price, jenis, rilis, genre, image } = req.body;
+  const {
+    judul,
+    penulis,
+    sinopsis,
+    status,
+    price,
+    jenis,
+    rilis,
+    genre,
+    image,
+  } = req.body;
 
   // cari image dengan field image dan genre
   await checkingImage(image);
@@ -137,6 +156,9 @@ const checkingKomik = async (id) => {
   const result = await Komik.findOne({
     _id: id,
   });
+
+  if (result === undefined || result === null || result === '')
+    throw new NotFoundError(`Belum ada komik yang dipilih`);
 
   if (!result) throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
 

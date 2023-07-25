@@ -53,7 +53,7 @@ const createChapter = async (req) => {
   if (check) throw new BadRequestError("judul chapter duplikat");
 
   if(file === '') {
-    throw new BadRequestError('Sedang upload file, klik lagi dalam 5 detik');
+    throw new BadRequestError('Belum ada file komik yang diupload');
   }
 
   const result = await Chapter.create({

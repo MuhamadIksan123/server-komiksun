@@ -65,6 +65,8 @@ const deleteGenre = async (req) => {
 // tambahkan function checking Genre 
 const checkingGenre = async (id) => {
   const result = await Genre.findOne({ _id: id });
+
+  if (result === undefined || result === null || result === '') throw new NotFoundError(`Belum ada genre yang dipilih`);
   
   if (!result) throw new NotFoundError(`Tidak ada Genre dengan id :  ${id}`);
 

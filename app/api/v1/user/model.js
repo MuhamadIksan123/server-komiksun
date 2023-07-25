@@ -47,8 +47,17 @@ const userSchema = new mongoose.Schema(
     },
     biodata: {
       type: String,
-      minlength: [30, 'Panjang biodata minimal 30 karakter'],
-      maxLength: [400, 'Panjang biodata maksimal 400 karakter'],
+      validate: {
+        validator: function (value) {
+          // Allow empty or undefined values
+          if (!value) return true;
+
+          // Check the length of the value
+          return value.length >= 30 && value.length <= 400;
+        },
+        message:
+          'Panjang biodata harus minimal 30 karakter dan maksimal 400 karakter',
+      },
     },
     image: {
       type: mongoose.Types.ObjectId,

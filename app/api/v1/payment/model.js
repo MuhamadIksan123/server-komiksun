@@ -5,18 +5,18 @@ const PaymentSchema = Schema(
   {
     type: {
       type: String,
-      required: [true, "Tipe pembayaran harus diisi"],
+      required: [true, 'Tipe pembayaran harus diisi'],
       minlength: 3,
       maxlength: 50,
     },
     image: {
       type: mongoose.Types.ObjectId,
-      ref: "Image",
+      ref: 'Image',
       required: true,
     },
     nomor: {
       type: String,
-      required: true,
+      required: [true, 'Nomor pembayaran harus diisi'],
     },
     status: {
       type: Boolean,
