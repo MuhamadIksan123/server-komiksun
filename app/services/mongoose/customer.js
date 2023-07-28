@@ -228,6 +228,26 @@ const getAllTransaksi = async (req) => {
 const checkoutOrder = async (req) => {
   const { komik, personalDetail, payment, image } = req.body;
 
+  if (!payment) {
+    throw new BadRequestError('Mohon isi data metode pembayaran');
+  }
+
+  if (!image) {
+    throw new BadRequestError('Mohon isi data gambar');
+  }
+
+  if (
+    !personalDetail ||
+    !personalDetail.lastName ||
+    !personalDetail.firstName ||
+    !personalDetail.email ||
+    !personalDetail.role
+  ) {
+    throw new BadRequestError(
+      'Mohon isi data lengkap personal detail (lastName, firstName, email, role)'
+    );
+  }
+
   const checkingKomik = await Komik.findOne({ _id: komik });
   if (!checkingKomik) {
     throw new NotFoundError('Tidak ada komik dengan id : ' + komik);
@@ -250,7 +270,7 @@ const checkoutOrder = async (req) => {
     if (checkingOrder.komik.toString() === komik) {
       if (checkingOrder.statusTransaksi === 'Menunggu Konfirmasi') {
         throw new BadRequestError(
-          'Sudah order, mohon tunggu konfirmasi pembayaran'
+          'Sudah order, mohon tunggu admin mengkonfirmasi pembayaran'
         );
       }
     }
