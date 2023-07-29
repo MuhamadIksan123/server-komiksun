@@ -17,7 +17,7 @@ const { createUserRefreshToken } = require('./refreshToken');
 const { otpMail } = require('../mail');
 
 const signupUser = async (req) => {
-  const { nama, email, password, role } = req.body;
+  const { nama, email, password, role, image} = req.body;
 
   // jika email dan status tidak aktif
   let result = await User.findOne({
@@ -30,6 +30,7 @@ const signupUser = async (req) => {
     result.role = role;
     result.email = email;
     result.password = password;
+    result.image = image;
     result.otp = Math.floor(Math.random() * 9999);
     await result.save();
   } else {
@@ -38,6 +39,7 @@ const signupUser = async (req) => {
       email,
       password,
       role,
+      image,
       otp: Math.floor(Math.random() * 9999),
     });
   }
