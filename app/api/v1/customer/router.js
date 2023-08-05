@@ -17,6 +17,7 @@ const {
   getAllReader,
   getDetailReader,
   createContactCustomer,
+  createRating
 } = require('./controller');
 
 const { authenticateUser } = require("../../../middlewares/auth");
@@ -37,9 +38,6 @@ router.get('/chapter/:id', getDetailChapter);
 router.get('/customer', getAllReader);
 router.get('/customer/:id', getDetailReader);
 router.post('/contact', createContactCustomer);
-
-
-
-
+router.post('/komik/:id/rating', createRating);
 
 module.exports = router;

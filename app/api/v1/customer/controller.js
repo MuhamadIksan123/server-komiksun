@@ -15,6 +15,7 @@ const {
   getAllCustomer,
   getOneCustomer,
   createContact,
+  addRating,
 } = require('../../../services/mongoose/customer');
 
 const { StatusCodes } = require("http-status-codes");
@@ -217,6 +218,20 @@ const createContactCustomer = async (req, res, next) => {
   }
 };
 
+const createRating = async (req, res, next) => {
+  try {
+    const result = await addRating(req);
+
+    console.log(result);
+
+    res.status(StatusCodes.CREATED).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   signup,
   activeUser,
@@ -235,4 +250,5 @@ module.exports = {
   getAllReader,
   getDetailReader,
   createContactCustomer,
+  createRating,
 };

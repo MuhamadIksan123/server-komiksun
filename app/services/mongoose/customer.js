@@ -5,6 +5,7 @@ const Transaksi = require('../../api/v1/transaksi/model');
 const Payment = require('../../api/v1/payment/model');
 const Chapter = require('../../api/v1/chapter/model');
 const Contact = require('../../api/v1/contact/model');
+const Rating = require('../../api/v1/rating/model');
 
 const {
   BadRequestError,
@@ -17,7 +18,7 @@ const { createUserRefreshToken } = require('./refreshToken');
 const { otpMail } = require('../mail');
 
 const signupUser = async (req) => {
-  const { nama, email, password, role, image} = req.body;
+  const { nama, email, password, role, image } = req.body;
 
   // jika email dan status tidak aktif
   let result = await User.findOne({
@@ -123,34 +124,115 @@ const getAllGenre = async () => {
   return result;
 };
 
-const getAllKomik = async (req) => {
-  const result = await Komik.find({ statusKomik: 'Publikasi' })
-    .populate({
-      path: 'image',
-      select: '_id nama',
-    })
-    .populate({
-      path: 'genre',
-      select: '_id nama',
-    })
-    .populate({
-      path: 'vendor',
-      select: '_id nama role email lahir statusUser otp nomor image komik',
+// const getAllKomik = async (req) => {
+//   const result = await Komik.find({ statusKomik: 'Publikasi' })
+//     .populate({
+//       path: 'image',
+//       select: '_id nama',
+//     })
+//     .populate({
+//       path: 'genre',
+//       select: '_id nama',
+//     })
+//     .populate({
+//       path: 'vendor',
+//       select: '_id nama role email lahir statusUser otp nomor image komik',
+//     });
+
+//   return result;
+// };
+
+const getAllKomik = async () => {
+  try {
+    const komiks = await Komik.find({ statusKomik: 'Publikasi' })
+      .populate({
+        path: 'image',
+        select: '_id nama',
+      })
+      .populate({
+        path: 'genre',
+        select: '_id nama',
+      })
+      .populate({
+        path: 'vendor',
+        select: '_id nama role email lahir statusUser otp nomor image komik',
+      });
+
+    // Ambil semua ID komik dari data komik yang ditemukan
+    const komikIds = komiks.map((komik) => komik._id);
+
+    // Cari semua rating yang memiliki ID komik yang sesuai
+    const ratings = await Rating.find({ komik: { $in: komikIds } });
+
+    // Buat objek untuk menyimpan rating berdasarkan ID komik
+    const ratingsByKomikId = {};
+    ratings.forEach((rating) => {
+      if (!ratingsByKomikId[rating.komik]) {
+        ratingsByKomikId[rating.komik] = [];
+      }
+      ratingsByKomikId[rating.komik].push(rating.rating);
     });
 
-  return result;
+    // Gabungkan rating ke dalam data komik
+    const komiksWithRating = komiks.map((komik) => {
+      const komikId = komik._id.toString();
+      const komikRatings = ratingsByKomikId[komikId] || [];
+      const averageRating =
+        komikRatings.length > 0
+          ? komikRatings.reduce((acc, rating) => acc + rating, 0) /
+            komikRatings.length
+          : 0;
+
+      // Ubah averageRating menjadi angka dengan 1 digit desimal
+      const roundedRating = averageRating.toFixed(1);
+
+      return {
+        ...komik.toObject(),
+        ratings: komikRatings,
+        averageRating: roundedRating,
+      };
+    });
+
+    return komiksWithRating;
+  } catch (error) {
+    throw new Error('Gagal mendapatkan data komik beserta rating');
+  }
 };
 
 const getOneKomik = async (req) => {
   const { id } = req.params;
-  const result = await Komik.findOne({ _id: id })
-    .populate('genre')
-    .populate({ path: 'vendor', populate: 'image' })
-    .populate('image');
 
-  if (!result) throw new NotFoundError(`Tidak ada acara dengan id :  ${id}`);
+  try {
+    const komik = await Komik.findOne({ _id: id })
+      .populate('genre')
+      .populate({ path: 'vendor', populate: 'image' })
+      .populate('image');
 
-  return result;
+    if (!komik) {
+      throw new NotFoundError(`Tidak ada komik dengan id : ${id}`);
+    }
+
+    const ratings = await Rating.find({ komik: id }).select('rating customer');
+    const komikRatings = ratings.map((rating) => rating.rating);
+
+    const totalRatings = komikRatings.length;
+    const sumRatings = komikRatings.reduce((acc, rating) => acc + rating, 0);
+    const averageRating = totalRatings > 0 ? sumRatings / totalRatings : 0;
+
+    // Tambahkan field averageRating ke objek komik
+    komik.averageRating = averageRating;
+
+    return {
+      ...komik.toObject(),
+      averageRating: averageRating,
+    };
+
+    // return komik;
+  } catch (error) {
+    throw new Error(
+      `Gagal mendapatkan data komik dengan rating: ${error.message}`
+    );
+  }
 };
 
 const getAllVendor = async (req) => {
@@ -360,6 +442,36 @@ const createContact = async (req) => {
   return result;
 };
 
+const addRating = async (req, res) => {
+  const { id } = req.params;
+  const { rating, customer } = req.body;
+
+  const komik = await Komik.findOne({
+    _id: id,
+  });
+
+  if (!komik) throw new NotFoundError(`Tidak ada komik`);
+
+  // Create the rating
+  const newRating = new Rating({
+    rating,
+    customer,
+    komik: komik._id,
+  });
+
+  await newRating.save();
+
+  // Update the average rating for the komik
+  const ratings = await Rating.find({ komik: komik._id });
+  const totalRatings = ratings.reduce((sum, r) => sum + r.rating, 0);
+  const averageRating = totalRatings / ratings.length;
+
+  komik.rating = averageRating;
+  await komik.save();
+
+  return komik;
+};
+
 module.exports = {
   signupUser,
   activateUser,
@@ -377,4 +489,6 @@ module.exports = {
   getAllCustomer,
   getOneCustomer,
   createContact,
+  addRating,
+  getAllRating
 };
