@@ -17,8 +17,6 @@ const createUser = async (req, res) => {
     image,
   } = req.body;
 
-  console.log(req.body);
-
   if (password !== confirmPassword) {
     throw new BadRequestError('Password dan Konfirmasi password tidak cocok');
   }

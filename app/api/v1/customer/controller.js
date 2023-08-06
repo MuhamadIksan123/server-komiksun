@@ -16,6 +16,10 @@ const {
   getOneCustomer,
   createContact,
   addRating,
+  getAllRating,
+  getAllKomikByHighestRating,
+  getAllKomikByGenreAction,
+  getAllKomikByGenreAdventure
 } = require('../../../services/mongoose/customer');
 
 const { StatusCodes } = require("http-status-codes");
@@ -222,9 +226,55 @@ const createRating = async (req, res, next) => {
   try {
     const result = await addRating(req);
 
-    console.log(result);
-
     res.status(StatusCodes.CREATED).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const ratingAll = async (req, res, next) => {
+  try {
+    const result = await getAllRating(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const allComicsByHighestRating = async (req, res, next) => {
+  try {
+    const result = await getAllKomikByHighestRating(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const allComicsByGenreAction = async (req, res, next) => {
+  try {
+    const result = await getAllKomikByGenreAction(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const allComicsByGenreAdventure = async (req, res, next) => {
+  try {
+    const result = await getAllKomikByGenreAdventure(req);
+
+    res.status(StatusCodes.OK).json({
       data: result,
     });
   } catch (err) {
@@ -251,4 +301,8 @@ module.exports = {
   getDetailReader,
   createContactCustomer,
   createRating,
+  ratingAll,
+  allComicsByHighestRating,
+  allComicsByGenreAction,
+  allComicsByGenreAdventure,
 };

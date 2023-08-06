@@ -472,6 +472,55 @@ const addRating = async (req, res) => {
   return komik;
 };
 
+const getAllRating = async (req) => {
+  const result = await Rating.find();
+
+  return result;
+};
+
+const getAllKomikByHighestRating = async () => {
+  try {
+    // Memanggil fungsi untuk mendapatkan semua komik dengan rating
+    const komiksWithRating = await getAllKomik();
+
+    // Mengurutkan komik berdasarkan averageRating dari tertinggi ke terendah
+    const komiksWithHighestRating = komiksWithRating.sort(
+      (a, b) => b.averageRating - a.averageRating
+    );
+
+    return komiksWithHighestRating;
+  } catch (error) {
+    throw new Error('Gagal mendapatkan data komik beserta rating');
+  }
+};
+
+const getAllKomikByGenreAction = async () => {
+   const genreId = '64478156eafc6ebfbe383b37';
+   // Memanggil fungsi untuk mendapatkan semua komik dengan rating
+   const komiksWithRating = await getAllKomikByHighestRating();
+
+   // Mengambil hanya komik dengan genre "Action" berdasarkan ID genre
+   const komiksWithGenreAction = komiksWithRating.filter(
+     (komik) => komik.genre._id.toString() === genreId
+   );
+
+   return komiksWithGenreAction;
+};
+
+const getAllKomikByGenreAdventure = async () => {
+  const genreId = '64491e5bdf65809939892196';
+  // Memanggil fungsi untuk mendapatkan semua komik dengan rating
+  const komiksWithRating = await getAllKomikByHighestRating();
+
+  // Mengambil hanya komik dengan genre "Adventure" berdasarkan ID genre
+  const komiksWithGenreAdventure = komiksWithRating.filter(
+    (komik) => komik.genre._id.toString() === genreId
+  );
+
+  return komiksWithGenreAdventure;
+};
+
+
 module.exports = {
   signupUser,
   activateUser,
@@ -490,5 +539,8 @@ module.exports = {
   getOneCustomer,
   createContact,
   addRating,
-  getAllRating
+  getAllRating,
+  getAllKomikByHighestRating,
+  getAllKomikByGenreAction,
+  getAllKomikByGenreAdventure,
 };

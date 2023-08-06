@@ -17,7 +17,11 @@ const {
   getAllReader,
   getDetailReader,
   createContactCustomer,
-  createRating
+  createRating,
+  ratingAll,
+  allComicsByHighestRating,
+  allComicsByGenreAction,
+  allComicsByGenreAdventure,
 } = require('./controller');
 
 const { authenticateUser } = require("../../../middlewares/auth");
@@ -39,5 +43,11 @@ router.get('/customer', getAllReader);
 router.get('/customer/:id', getDetailReader);
 router.post('/contact', createContactCustomer);
 router.post('/komik/:id/rating', createRating);
+router.get('/rating', ratingAll);
+router.get('/komik-highest-rating', allComicsByHighestRating);
+router.get('/komik-genre-action', allComicsByGenreAction);
+router.get('/komik-genre-adventure', allComicsByGenreAdventure);
+
+
 
 module.exports = router;
