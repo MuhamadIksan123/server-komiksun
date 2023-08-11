@@ -8,6 +8,7 @@ const {
   getDetailLandingPage,
   getDashboard,
   checkout,
+  getNotifikasiByStatus,
   getAllPayment,
   getAllListGenre,
   getAllWriter,
@@ -33,6 +34,7 @@ router.get("/komik", getAllLandingPage);
 router.get("/komik/:id", getDetailLandingPage);
 router.get("/transaksi", authenticateUser, getDashboard);
 router.post("/checkout", authenticateUser, checkout);
+router.get("/status/:order_id", getNotifikasiByStatus);
 router.get("/payment/:vendor", authenticateUser, getAllPayment);
 router.get('/genre', getAllListGenre);
 router.get('/vendor', getAllWriter);

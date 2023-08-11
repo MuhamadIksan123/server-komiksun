@@ -7,6 +7,7 @@ const {
   getOneKomik,
   getAllTransaksi,
   checkoutOrder,
+  getTransaksibyStatus,
   getAllPaymentByVendor,
   getAllVendor,
   getOneVendor,
@@ -119,6 +120,18 @@ const checkout = async (req, res, next) => {
     const result = await checkoutOrder(req);
 
     res.status(StatusCodes.CREATED).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getNotifikasiByStatus = async (req, res, next) => {
+  try {
+    const result = await getTransaksibyStatus(req);
+
+    res.status(StatusCodes.OK).json({
       data: result,
     });
   } catch (err) {
@@ -291,6 +304,7 @@ module.exports = {
   getDetailLandingPage,
   getDashboard,
   checkout,
+  getNotifikasiByStatus,
   getAllPayment,
   getAllListGenre,
   getAllWriter,

@@ -7,6 +7,14 @@ const Chapter = require('../../api/v1/chapter/model');
 const Contact = require('../../api/v1/contact/model');
 const Rating = require('../../api/v1/rating/model');
 
+const midtransClient = require('midtrans-client');
+// Create Core API instance
+let coreApi = new midtransClient.CoreApi({
+  isProduction: false,
+  serverKey: 'SB-Mid-server-8HFDCO6xYb1335jY1TGbrvH_',
+  clientKey: 'SB-Mid-client-z9XIaQxpas1Y0Qfg',
+});
+
 const {
   BadRequestError,
   NotFoundError,
@@ -302,6 +310,7 @@ const getAllTransaksi = async (req) => {
     path: 'komik',
     populate: { path: 'image', select: 'nama' },
   });
+  console.log(result);
   return result;
 };
 
@@ -309,15 +318,94 @@ const getAllTransaksi = async (req) => {
  * Tugas Send email invoice
  * TODO: Ambil data email dari personal detail
  *  */
+// const checkoutOrder = async (req) => {
+//   const { komik, personalDetail, payment, image } = req.body;
+
+//   if (!payment) {
+//     throw new BadRequestError('Mohon isi data metode pembayaran');
+//   }
+
+//   if (!image) {
+//     throw new BadRequestError('Mohon isi data gambar');
+//   }
+
+//   if (
+//     !personalDetail ||
+//     !personalDetail.lastName ||
+//     !personalDetail.firstName ||
+//     !personalDetail.email ||
+//     !personalDetail.role
+//   ) {
+//     throw new BadRequestError(
+//       'Mohon isi data lengkap personal detail (lastName, firstName, email, role)'
+//     );
+//   }
+
+//   const checkingKomik = await Komik.findOne({ _id: komik });
+//   if (!checkingKomik) {
+//     throw new NotFoundError('Tidak ada komik dengan id : ' + komik);
+//   }
+
+//   const checkingPayment = await Payment.findOne({ _id: payment });
+
+//   if (!checkingPayment) {
+//     throw new NotFoundError(
+//       'Tidak ada metode pembayaran dengan id :' + payment
+//     );
+//   }
+
+//   const checkingOrder = await Transaksi.findOne({
+//     komik,
+//     customer: req.user.userId,
+//   });
+
+//   if (checkingOrder) {
+//     if (checkingOrder.komik.toString() === komik) {
+//       if (checkingOrder.statusTransaksi === 'Menunggu Konfirmasi') {
+//         throw new BadRequestError(
+//           'Sudah order, mohon tunggu admin mengkonfirmasi pembayaran'
+//         );
+//       }
+//     }
+//   }
+
+//   await checkingKomik.save();
+
+//   const historyKomik = {
+//     judul: checkingKomik.judul,
+//     penulis: checkingKomik.penulis,
+//     sinopsis: checkingKomik.sinopsis,
+//     status: checkingKomik.status,
+//     price: checkingKomik.price,
+//     jenis: checkingKomik.jenis,
+//     rilis: checkingKomik.rilis,
+//     statusKomik: checkingKomik.statusKomik,
+//     genre: checkingKomik.genre,
+//     image: checkingKomik.image,
+//     vendor: checkingKomik.vendor,
+//   };
+
+//   const result = new Transaksi({
+//     date: new Date(),
+//     personalDetail: personalDetail,
+//     price: checkingKomik.price,
+//     customer: req.user.userId,
+//     komik,
+//     historyKomik,
+//     payment,
+//     statusTransaksi: 'Menunggu Konfirmasi',
+//     image,
+//   });
+
+//   await result.save();
+//   return result;
+// };
+
 const checkoutOrder = async (req) => {
-  const { komik, personalDetail, payment, image } = req.body;
+  const { komik, personalDetail } = req.body;
 
-  if (!payment) {
-    throw new BadRequestError('Mohon isi data metode pembayaran');
-  }
-
-  if (!image) {
-    throw new BadRequestError('Mohon isi data gambar');
+  if (!komik) {
+    throw new BadRequestError('Tidak ada data komik');
   }
 
   if (
@@ -332,65 +420,135 @@ const checkoutOrder = async (req) => {
     );
   }
 
-  const checkingKomik = await Komik.findOne({ _id: komik });
-  if (!checkingKomik) {
-    throw new NotFoundError('Tidak ada komik dengan id : ' + komik);
-  }
+  try {
+    const chargeResponse = await coreApi.charge(req.body);
 
-  const checkingPayment = await Payment.findOne({ _id: payment });
+    const dataTransaksi = await Transaksi.find({
+      komik: komik,
+      customer: req.user.userId,
+    });
 
-  if (!checkingPayment) {
-    throw new NotFoundError(
-      'Tidak ada metode pembayaran dengan id :' + payment
+    const foundKomik = dataTransaksi.find(
+      (transaksi) =>
+        transaksi.response_midtrans.transaction_status === 'settlement'
     );
+
+    if (foundKomik) {
+      throw new BadRequestError('Sudah melakukan pembayaran sebelumnya');
+    }
+
+    const foundPendingTransaction = dataTransaksi.find(
+      (transaksi) =>
+        transaksi.response_midtrans.transaction_status === 'pending'
+    );
+
+    if (foundPendingTransaction) {
+      throw new BadRequestError(
+        'Transaksi dalam status menunggu. Harap selesaikan transaksi.'
+      );
+    }
+
+    const dataOrder = {
+      date: new Date(),
+      personalDetail: personalDetail,
+      customer: req.user.userId,
+      komik: komik,
+      response_midtrans: chargeResponse,
+      order_id: chargeResponse.order_id,
+    };
+
+    const result = await Transaksi.create(dataOrder);
+
+    return result;
+  } catch (error) {
+    throw error; // You should handle or log the error appropriately
   }
+};
 
-  const checkingOrder = await Transaksi.findOne({
-    komik,
-    customer: req.user.userId,
-  });
+const getTransaksibyStatus = async (req) => {
+  try {
+    const statusResponse = await coreApi.transaction.status(
+      req.params.order_id
+    );
+    // Lakukan sesuatu dengan objek `response`
+    let responseMidtrans = statusResponse;
 
-  if (checkingOrder) {
-    if (checkingOrder.komik.toString() === komik) {
-      if (checkingOrder.statusTransaksi === 'Menunggu Konfirmasi') {
-        throw new BadRequestError(
-          'Sudah order, mohon tunggu admin mengkonfirmasi pembayaran'
-        );
+    await Transaksi.updateOne(
+      { order_id: req.params.order_id },
+      { response_midtrans: responseMidtrans }
+    );
+
+    const dataTransaksi = await Transaksi.findOne({
+      order_id: req.params.order_id,
+    });
+
+    const result = await User.findOne({ _id: dataTransaksi.customer });
+
+    const komikValue = dataTransaksi.komik
+      ? dataTransaksi.komik.toString()
+      : '';
+
+    // Ambil objek komik dari basis data berdasarkan komikValue
+    const komik = await Komik.findOne({ _id: komikValue });
+
+    if (!komik) {
+      throw new Error('Data komik tidak ditemukan.');
+    }
+
+    // Ambil judul komik dari objek komik
+    const judulKomik = komik.judul; // Ganti dengan properti yang sesuai
+
+    if (komikValue && komikValue !== '' && result.komik) {
+      const foundKomik = result.komik.some(
+        (komik) => komik.value && komik.value.toString() === komikValue
+      );
+
+      if (responseMidtrans.transaction_status === 'settlement') {
+        if (!foundKomik) {
+          let komikToAdd = {
+            value: dataTransaksi.komik._id,
+            label: judulKomik, // Ganti dengan label yang sesuai
+            target: {
+              value: dataTransaksi.komik._id,
+              name: 'komik',
+            }, // Ganti dengan target yang sesuai
+          };
+
+          const foundExistingKomik = result.komik.some(
+            (komik) => komik.value === komikToAdd.value
+          );
+
+          if (!foundExistingKomik) {
+            result.komik.push(komikToAdd);
+
+            await User.updateOne(
+              { _id: dataTransaksi.customer },
+              { komik: result.komik }
+            );
+          }
+        }
       }
     }
+    return statusResponse;
+  } catch (error) {
+    // Tangani kesalahan jika ada
+    throw error; // Anda juga bisa melakukan penanganan kesalahan khusus di sini
   }
-
-  await checkingKomik.save();
-
-  const historyKomik = {
-    judul: checkingKomik.judul,
-    penulis: checkingKomik.penulis,
-    sinopsis: checkingKomik.sinopsis,
-    status: checkingKomik.status,
-    price: checkingKomik.price,
-    jenis: checkingKomik.jenis,
-    rilis: checkingKomik.rilis,
-    statusKomik: checkingKomik.statusKomik,
-    genre: checkingKomik.genre,
-    image: checkingKomik.image,
-    vendor: checkingKomik.vendor,
-  };
-
-  const result = new Transaksi({
-    date: new Date(),
-    personalDetail: personalDetail,
-    price: checkingKomik.price,
-    customer: req.user.userId,
-    komik,
-    historyKomik,
-    payment,
-    statusTransaksi: 'Menunggu Konfirmasi',
-    image,
-  });
-
-  await result.save();
-  return result;
 };
+
+// const getTransaksibyStatus = async (req) => {
+//   coreApi.transaction.status(req.params.order_id).then((response) => {
+//     // do something to `response` object
+//     let responseMidtrans = statusResponse;
+
+//     const result = Transaksi.update(
+//       { response_midtrans: responseMidtrans },
+//       { where: { id: req.params.order_id } }
+//     )
+//   });
+
+//   return result
+// };
 
 const getAllPaymentByVendor = async (req) => {
   const { vendor } = req.params;
@@ -495,16 +653,16 @@ const getAllKomikByHighestRating = async () => {
 };
 
 const getAllKomikByGenreAction = async () => {
-   const genreId = '64478156eafc6ebfbe383b37';
-   // Memanggil fungsi untuk mendapatkan semua komik dengan rating
-   const komiksWithRating = await getAllKomikByHighestRating();
+  const genreId = '64478156eafc6ebfbe383b37';
+  // Memanggil fungsi untuk mendapatkan semua komik dengan rating
+  const komiksWithRating = await getAllKomikByHighestRating();
 
-   // Mengambil hanya komik dengan genre "Action" berdasarkan ID genre
-   const komiksWithGenreAction = komiksWithRating.filter(
-     (komik) => komik.genre._id.toString() === genreId
-   );
+  // Mengambil hanya komik dengan genre "Action" berdasarkan ID genre
+  const komiksWithGenreAction = komiksWithRating.filter(
+    (komik) => komik.genre._id.toString() === genreId
+  );
 
-   return komiksWithGenreAction;
+  return komiksWithGenreAction;
 };
 
 const getAllKomikByGenreAdventure = async () => {
@@ -520,7 +678,6 @@ const getAllKomikByGenreAdventure = async () => {
   return komiksWithGenreAdventure;
 };
 
-
 module.exports = {
   signupUser,
   activateUser,
@@ -530,6 +687,7 @@ module.exports = {
   getOneKomik,
   getAllTransaksi,
   checkoutOrder,
+  getTransaksibyStatus,
   getAllPaymentByVendor,
   getAllVendor,
   getOneVendor,
