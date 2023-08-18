@@ -7,7 +7,7 @@ const {
   authorizeRoles,
 } = require("../../../middlewares/auth");
 
-router.get("/payment", authenticateUser, authorizeRoles("vendor"), index);
+router.get("/payment", authenticateUser, authorizeRoles("vendor", "admin"), index);
 router.get("/payment/:id", authenticateUser, authorizeRoles("vendor"), find);
 router.put("/payment/:id", authenticateUser, authorizeRoles("vendor"), update);
 router.delete(

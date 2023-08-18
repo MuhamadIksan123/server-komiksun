@@ -4,14 +4,17 @@ const { checkingImage } = require('./images');
 const { NotFoundError, BadRequestError } = require('../../errors');
 
 const getAllPayment = async (req) => {
-  let condition = { vendor: req.user.userId };
+  let condition = {};
+  if (req.user.role !== 'admin') {
+    condition = { ...condition, 'vendor': req.user.userId };
+  }
+  // let condition = { vendor: req.user.userId };
 
   const result = await Payment.find(condition)
     .populate({
       path: 'image',
       select: '_id nama',
     })
-    .select('_id type nomor status image');
 
   return result;
 };

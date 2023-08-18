@@ -30,6 +30,8 @@ const getAllTransaksi = async (req) => {
     .limit(limit)
     .skip(limit * (page - 1));
 
+    console.log(result);
+
   const count = await Transaksi.countDocuments(condition);
   return { data: result, pages: Math.ceil(count / limit), total: count };
 };
@@ -41,14 +43,6 @@ const getOneTransaksi = async (req) => {
       path: 'komik',
       populate: { path: 'vendor', select: 'nama' },
     })
-    .populate({
-      path: 'image',
-      select: '_id nama',
-    })
-    .populate({
-      path: 'payment',
-      select: '_id type nomor',
-    });
 
     if (!result) throw new NotFoundError(`Tidak ada transaksi dengan id :  ${id}`);
 

@@ -310,7 +310,6 @@ const getAllTransaksi = async (req) => {
     path: 'komik',
     populate: { path: 'image', select: 'nama' },
   });
-  console.log(result);
   return result;
 };
 
@@ -404,9 +403,12 @@ const getAllTransaksi = async (req) => {
 const checkoutOrder = async (req) => {
   const { komik, personalDetail } = req.body;
 
-  if (!komik) {
-    throw new BadRequestError('Tidak ada data komik');
+  const checkingKomik = await Komik.findOne({ _id: komik });
+  if (!checkingKomik) {
+    throw new NotFoundError('Tidak ada data komik dengan id : ' + komik);
   }
+
+  await checkingKomik.save();
 
   if (
     !personalDetail ||
@@ -428,12 +430,12 @@ const checkoutOrder = async (req) => {
       customer: req.user.userId,
     });
 
-    const foundKomik = dataTransaksi.find(
+    const foundSettlementTransaction = dataTransaksi.find(
       (transaksi) =>
         transaksi.response_midtrans.transaction_status === 'settlement'
     );
 
-    if (foundKomik) {
+    if (foundSettlementTransaction) {
       throw new BadRequestError('Sudah melakukan pembayaran sebelumnya');
     }
 
@@ -448,22 +450,40 @@ const checkoutOrder = async (req) => {
       );
     }
 
+    const historyKomik = {
+      judul: checkingKomik.judul,
+      penulis: checkingKomik.penulis,
+      sinopsis: checkingKomik.sinopsis,
+      status: checkingKomik.status,
+      price: checkingKomik.price,
+      jenis: checkingKomik.jenis,
+      rilis: checkingKomik.rilis,
+      statusKomik: checkingKomik.statusKomik,
+      genre: checkingKomik.genre,
+      image: checkingKomik.image,
+      vendor: checkingKomik.vendor,
+    };
+
     const dataOrder = {
       date: new Date(),
       personalDetail: personalDetail,
       customer: req.user.userId,
       komik: komik,
+      historyKomik: historyKomik, // Menyimpan data historyKomik
       response_midtrans: chargeResponse,
       order_id: chargeResponse.order_id,
     };
 
     const result = await Transaksi.create(dataOrder);
 
+    console.log(result);
+
     return result;
   } catch (error) {
-    throw error; // You should handle or log the error appropriately
+    throw error; // Anda sebaiknya menangani atau mencatat error dengan tepat
   }
 };
+
 
 const getTransaksibyStatus = async (req) => {
   try {
