@@ -1,10 +1,10 @@
 // import model Komik
 const Chapter = require('../../api/v1/chapter/model');
-const { checkingFile } = require("./files");
-const { checkingKomik } = require("./komik");
+const { checkingFile } = require('./files');
+const { checkingKomik } = require('./komik');
 
 // import custom error not found dan bad request
-const { NotFoundError, BadRequestError } = require("../../errors");
+const { NotFoundError, BadRequestError } = require('../../errors');
 
 const getAllChapter = async (req) => {
   const { keyword, komik, statusChapter } = req.query;
@@ -16,7 +16,7 @@ const getAllChapter = async (req) => {
   }
 
   if (keyword) {
-    condition = { ...condition, judul: { $regex: keyword, $options: "i" } };
+    condition = { ...condition, judul: { $regex: keyword, $options: 'i' } };
   }
 
   if (komik) {
@@ -35,7 +35,7 @@ const getAllChapter = async (req) => {
     .populate({
       path: 'komik',
       select: '_id judul',
-    })
+    });
 
   return result;
 };
@@ -47,12 +47,16 @@ const createChapter = async (req) => {
   await checkingKomik(komik);
 
   // cari komik dengan field nama
-  const check = await Chapter.findOne({ judul, vendor: req.user.userId, komik });
+  const check = await Chapter.findOne({
+    judul,
+    vendor: req.user.userId,
+    komik,
+  });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik duplikat
-  if (check) throw new BadRequestError("judul chapter duplikat");
+  if (check) throw new BadRequestError('judul chapter duplikat');
 
-  if(file === '') {
+  if (file === '') {
     throw new BadRequestError('Belum ada file komik yang diupload');
   }
 
@@ -71,17 +75,17 @@ const getOneChapter = async (req) => {
   const { id } = req.params;
 
   const result = await Chapter.findOne({
-    _id: id, 
+    _id: id,
     vendor: req.user.userId,
   })
     .populate({
-      path: "file",
-      select: "_id nama",
+      path: 'file',
+      select: '_id nama',
     })
     .populate({
-      path: "komik",
-      select: "_id judul",
-    })
+      path: 'komik',
+      select: '_id judul',
+    });
 
   if (!result) throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
 
@@ -101,11 +105,11 @@ const updateChapter = async (req) => {
     judul,
     _id: { $ne: id },
     vendor: req.user.userId,
-    komik
+    komik,
   });
 
   // apa bila check true / data komik sudah ada maka kita tampilkan error bad request dengan message komik nama duplikat
-  if (check) throw new BadRequestError("Judul chapter duplikat");
+  if (check) throw new BadRequestError('Judul chapter duplikat');
 
   const result = await Chapter.findOneAndUpdate(
     { _id: id },
@@ -152,12 +156,18 @@ const changeStatusChapter = async (req) => {
 
   // cari event berdasarkan field id
   const checkChapter = await Chapter.findOne({
-    _id: id
+    _id: id,
   });
 
   // jika id result false / null maka akan menampilkan error `Tidak ada acara dengan id` yang dikirim client
   if (!checkChapter)
     throw new NotFoundError(`Tidak ada chapter dengan id :  ${id}`);
+
+  if (checkChapter.statusChapter === statusChapter) {
+    throw new BadRequestError(
+      `Gagal ubah status, status ${checkChapter.judul} sudah ${statusChapter}`
+    );
+  }
 
   checkChapter.statusChapter = statusChapter;
 
@@ -166,8 +176,6 @@ const changeStatusChapter = async (req) => {
   return checkChapter;
 };
 
-
-
 module.exports = {
   getAllChapter,
   createChapter,
@@ -175,5 +183,5 @@ module.exports = {
   updateChapter,
   deleteChapter,
   checkingChapter,
-  changeStatusChapter
+  changeStatusChapter,
 };

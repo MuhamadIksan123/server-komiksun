@@ -182,6 +182,12 @@ const changeStatusKomik = async (req) => {
   if (!checkKomik)
     throw new NotFoundError(`Tidak ada komik dengan id :  ${id}`);
 
+  if (checkKomik.statusKomik === statusKomik) {
+    throw new BadRequestError(
+      `Gagal ubah status, status ${checkKomik.judul} sudah ${statusKomik}`
+    );
+  }
+
   checkKomik.statusKomik = statusKomik;
 
   await checkKomik.save();
