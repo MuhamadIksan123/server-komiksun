@@ -23,6 +23,7 @@ const {
   allComicsByHighestRating,
   allComicsByGenreAction,
   allComicsByGenreAdventure,
+  allComicsByGenreSchool
 } = require('./controller');
 
 const { authenticateUser } = require("../../../middlewares/auth");
@@ -49,7 +50,6 @@ router.get('/rating', ratingAll);
 router.get('/komik-highest-rating', allComicsByHighestRating);
 router.get('/komik-genre-action', allComicsByGenreAction);
 router.get('/komik-genre-adventure', allComicsByGenreAdventure);
-
-
+router.get('/komik-genre-school', allComicsByGenreSchool);
 
 module.exports = router;

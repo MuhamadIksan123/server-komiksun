@@ -20,7 +20,8 @@ const {
   getAllRating,
   getAllKomikByHighestRating,
   getAllKomikByGenreAction,
-  getAllKomikByGenreAdventure
+  getAllKomikByGenreAdventure,
+  getAllKomikByGenreSchool,
 } = require('../../../services/mongoose/customer');
 
 const { StatusCodes } = require("http-status-codes");
@@ -295,6 +296,18 @@ const allComicsByGenreAdventure = async (req, res, next) => {
   }
 };
 
+const allComicsByGenreSchool = async (req, res, next) => {
+  try {
+    const result = await getAllKomikByGenreSchool(req);
+
+    res.status(StatusCodes.OK).json({
+      data: result,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 module.exports = {
   signup,
   activeUser,
@@ -319,4 +332,5 @@ module.exports = {
   allComicsByHighestRating,
   allComicsByGenreAction,
   allComicsByGenreAdventure,
+  allComicsByGenreSchool
 };

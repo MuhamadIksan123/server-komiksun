@@ -698,6 +698,19 @@ const getAllKomikByGenreAdventure = async () => {
   return komiksWithGenreAdventure;
 };
 
+const getAllKomikByGenreSchool = async () => {
+  const genreId = '644782f17ae963db3a36acef';
+  // Memanggil fungsi untuk mendapatkan semua komik dengan rating
+  const komiksWithRating = await getAllKomikByHighestRating();
+
+  // Mengambil hanya komik dengan genre "Adventure" berdasarkan ID genre
+  const komiksWithGenreSchool = komiksWithRating.filter(
+    (komik) => komik.genre._id.toString() === genreId
+  );
+
+  return komiksWithGenreSchool;
+};
+
 module.exports = {
   signupUser,
   activateUser,
@@ -721,4 +734,5 @@ module.exports = {
   getAllKomikByHighestRating,
   getAllKomikByGenreAction,
   getAllKomikByGenreAdventure,
+  getAllKomikByGenreSchool,
 };

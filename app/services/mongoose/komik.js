@@ -53,6 +53,17 @@ const createKomik = async (req) => {
     image,
   } = req.body;
 
+  if (
+    !judul ||
+    !penulis ||
+    !sinopsis ||
+    !status ||
+    !jenis ||
+    !genre ||
+    !image
+  )
+    throw new BadRequestError('Semua form tambah data komik harus diisi!');
+
   // cari image dengan field image
   await checkingGenre(genre);
   await checkingImage(image);

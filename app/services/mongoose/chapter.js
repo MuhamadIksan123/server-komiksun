@@ -43,8 +43,9 @@ const getAllChapter = async (req) => {
 const createChapter = async (req) => {
   const { judul, rilis, file, komik } = req.body;
 
-  // cari image dengan field image
-  await checkingKomik(komik);
+  if (!judul || !file || !komik) throw new BadRequestError('Semua form tambah data chapter harus diisi!');
+    // cari image dengan field image
+    await checkingKomik(komik);
 
   // cari komik dengan field nama
   const check = await Chapter.findOne({
